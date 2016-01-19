@@ -1,0 +1,36 @@
+﻿<Window x:Class="TilePuzzleSolver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TilePuzzleSolver"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="1050">
+    <Grid>
+        <Grid HorizontalAlignment="Left" Height="94" Margin="0,575,0,0" VerticalAlignment="Top" Width="1042" Background="#FFCDCDCD">
+            <Button x:Name="Solve_Button" Content="SOLVE" HorizontalAlignment="Left" Height="35" Margin="15,5,0,49" Width="70"/>
+            <Button x:Name="Play_Button" Content="PLAY" HorizontalAlignment="Left" Height="35" Margin="15,45,0,9" Width="70"/>
+            <Label x:Name="Size" Content="SIZE:" HorizontalAlignment="Left" Margin="104,22,0,0" VerticalAlignment="Top" Height="41" Width="82" FontSize="26.667"/>
+            <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="29" Margin="250,32,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
+            <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="29" Margin="173,33,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
+            <Label x:Name="x" Content="X" HorizontalAlignment="Left" Margin="225,29,0,0" VerticalAlignment="Top" Height="50" Width="39" FontSize="18.667"/>
+            <Label x:Name="AvoidGreenTiles" Content="AVOID GREEN TILES?" HorizontalAlignment="Left" Margin="320,22,0,0" VerticalAlignment="Top" Height="41" Width="258" FontSize="26.667"/>
+            <CheckBox x:Name="AvoidGreen_CheckBox" Content="" HorizontalAlignment="Left" Margin="585,41,0,0" VerticalAlignment="Top" Height="36" Width="107"/>
+
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="575" VerticalAlignment="Top" Width="100" Background="#FFDADADA">
+            <Button x:Name="Red_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFF72015" Click="redButton_Click" IsEnabled="False"/>
+            <Button x:Name="Edit_Button" Content="EDIT" HorizontalAlignment="Left" Height="35" Margin="15,535,0,0" VerticalAlignment="Top" Width="70" Click="editButton_Click"/>
+            <Button x:Name="Orange_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,81,0,0" VerticalAlignment="Top" Width="66" Background="#FFF98626" Click="orangeButton_Click" IsEnabled="False"/>
+            <Button x:Name="Yellow_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,152,0,0" VerticalAlignment="Top" Width="66" Background="#FFFFF637" Click="yellowButton_Click" IsEnabled="False"/>
+            <Button x:Name="Green_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,223,0,0" VerticalAlignment="Top" Width="66" Background="#FF6EFF37" Click="greenButton_Click" IsEnabled="False"/>
+            <Button x:Name="Blue_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,294,0,0" VerticalAlignment="Top" Width="66" Background="#FF48028F" Click="blueButton_Click" IsEnabled="False"/>
+            <Button x:Name="Purple_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,365,0,0" VerticalAlignment="Top" Width="66" Background="#FFC303C3" Click="purpleButton_Click" IsEnabled="False"/>
+            <Button x:Name="Pink_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,436,0,0" VerticalAlignment="Top" Width="66" Background="#FFFF6CEB" Click="pinkButton_Click" IsEnabled="False"/>
+        </Grid>
+
+        <ScrollViewer HorizontalAlignment="Left" Height="575" Margin="100,0,0,0" HorizontalScrollBarVisibility="Visible" VerticalAlignment="Top" Width="935">
+            <UniformGrid x:Name="TilePuzzle_UniformGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Height="100" Width="100"/>
+        </ScrollViewer>
+    </Grid>
+</Window>

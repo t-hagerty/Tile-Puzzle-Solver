@@ -1,0 +1,14 @@
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.exe.config
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.exe
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.pdb
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csprojResolveAssemblyReference.cache
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\MainWindow.g.cs
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\App.g.cs
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver_MarkupCompile.cache
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver_MarkupCompile.lref
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\MainWindow.baml
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.g.resources
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.Properties.Resources.resources
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csproj.GenerateResource.Cache
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.exe
+c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.pdb
