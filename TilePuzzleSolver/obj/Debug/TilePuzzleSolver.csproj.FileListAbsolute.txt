@@ -12,3 +12,17 @@ c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzle
 c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csproj.GenerateResource.Cache
 c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.exe
 c:\users\tyler\documents\visual studio 2015\Projects\TilePuzzleSolver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.pdb
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.exe.config
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.exe
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.pdb
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.exe
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.pdb
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csprojResolveAssemblyReference.cache
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\MainWindow.g.cs
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\App.g.cs
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver_MarkupCompile.cache
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver_MarkupCompile.lref
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\MainWindow.baml
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.g.resources
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.Properties.Resources.resources
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csproj.GenerateResource.Cache

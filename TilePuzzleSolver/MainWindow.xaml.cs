@@ -65,7 +65,7 @@ namespace TilePuzzleSolver
                 {
                     newTilePuzzleGrid[r, c] = new Button();
                     newTilePuzzleGrid[r, c].Click += editTile_Click;
-                    switch (tilePuzzle.tileColor[r,c-1])
+                    switch (tilePuzzle.nodes[r,c-1].color)
                     {
                         case 0:
                             newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
@@ -123,31 +123,31 @@ namespace TilePuzzleSolver
                     case 0:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
                         
-                        tilePuzzle.tileColor[row, col] = 0;
+                        tilePuzzle.nodes[row, col].color = 0;
                         break;
                     case 1:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
-                        tilePuzzle.tileColor[row, col] = 1;
+                        tilePuzzle.nodes[row, col].color = 1;
                         break;
                     case 2:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
-                        tilePuzzle.tileColor[row, col] = 2;
+                        tilePuzzle.nodes[row, col].color = 2;
                         break;
                     case 3:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
-                        tilePuzzle.tileColor[row, col] = 3;
+                        tilePuzzle.nodes[row, col].color = 3;
                         break;
                     case 4:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
-                        tilePuzzle.tileColor[row, col] = 4;
+                        tilePuzzle.nodes[row, col].color = 4;
                         break;
                     case 5:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
-                        tilePuzzle.tileColor[row, col] = 5;
+                        tilePuzzle.nodes[row, col].color = 5;
                         break;
                     case 6:
                         (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                        tilePuzzle.tileColor[row, col] = 6;
+                        tilePuzzle.nodes[row, col].color = 6;
                         break;
                     default:
                         break;
