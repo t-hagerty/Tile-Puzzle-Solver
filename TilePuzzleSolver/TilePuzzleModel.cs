@@ -76,10 +76,14 @@ namespace TilePuzzleSolver
         {
             bool isPlayerOrangeScented = false;
 
-            //method to loop through 2d array and reset all nodes' edges?
+            //Until code to dynamically alter graph edges between nodes as the puzzle is editted is written (if at all realistically possible) must rebuild whole thing at once:
+            resetGraphEdges(); 
 
             buildGraph();
-             
+            
+            //A*-based pathfinding algorithm
+
+            //return something to represent path, maybe ordered list of tuples? that the mainwindow.xaml.cs can use to draw/highlight the path to the user.
         }
 
         public void buildGraph()
@@ -87,84 +91,6 @@ namespace TilePuzzleSolver
             for(int r = 0; r < rows; r++)
             {
                 checkEdgeLeft(startNode, r, -1); //-1 as column so it will check node at col = 0
-
-                //OLD CODE, refactored into checkEdgeLeft(node, int, int) for simplicity. Remove soon if no problems.
-                //if(nodes[r,0].color == 0 || nodes[r, 0].color == 2)
-                //{
-                //    continue;
-                //}
-                //if(nodes[r, 0].color == 3 || nodes[r, 0].color == 6)
-                //{
-                //    nodes[r, 0].edges[3] = startNode;
-                //    //startNode.edges.Add(nodes[r,0]);
-                //}
-                //if (nodes[r, 1].color == 1)
-                //{
-                //    nodes[r, 1].edges[3] = startNode;
-                //    //startNode.edges.Add(nodes[r,1]);
-                //    //startNode.however this specific edge is signified.isEdgeScented = true;
-                //    //startNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                //}
-                //else if(nodes[r, 0].color == 4)
-                //{
-                //    if((r - 1 >= 0 && nodes[r - 1, 0].color == 2) || (r + 1 < rows && nodes[r + 1, 0].color == 2) || (cols > 1 && nodes[r, 1].color == 2))
-                //    {
-                //        continue;
-                //    }
-                //    else
-                //    {
-                //        nodes[r, 0].edges[3] = startNode;
-                //        //startNode.edges.Add(nodes[r,0]);
-                //    }
-                //}
-                //else if(nodes[r, 0].color == 5)
-                //{
-                //    if(cols == 1)
-                //    {
-                //        endNode.edges[3] = startNode;
-                //        //startNode.edges.Add(endNode);
-                //        continue;
-                //    }
-                //    if(nodes[r, 0].color == 5)
-                //    {
-                //        int i = 1;
-
-                //        while (i < cols && nodes[r,i].color == 5)
-                //        {
-                //            i++;
-                //        }
-
-                //        if(nodes[r, i].color == 3 || nodes[r, i].color == 6)
-                //        {
-                //            nodes[r, i].edges[3] = startNode;
-                //            //startNode.edges.Add(nodes[r,i]);
-                //        }
-                //        else if(nodes[r, i].color == 0 || nodes[r, i].color == 2)
-                //        {
-                //            continue;
-                //        }
-                //        else if(nodes[r, i].color == 4)
-                //        {
-                //            if ((r - 1 >= 0 && nodes[r - 1, i].color == 2) || (r + 1 < rows && nodes[r + 1, i].color == 2) || (cols > 1 && nodes[r, i + 1].color == 2))
-                //            {
-                //                continue;
-                //            }
-                //            else
-                //            {
-                //                nodes[r, i].edges[3] = startNode;
-                //                //startNode.edges.Add(nodes[r,i]);
-                //            }
-                //        }
-                //        else if(nodes[r, i].color == 1)
-                //        {
-                //            nodes[r, i].edges[3] = startNode;
-                //            //startNode.edges.Add(nodes[r,i]);
-                //            //startNode.however this specific edge is signified.isEdgeScented = true;
-                //            //startNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                //        }
-                //    }
-
-                //}
             }
 
             for(int r = 0; r < rows - 1; r++)
@@ -192,6 +118,10 @@ namespace TilePuzzleSolver
 
         public void checkEdgeLeft(Node checkedNode, int nodeRow, int nodeCol)
         {
+            if (nodeCol + 1 == cols)
+            {
+                return;
+            }
             if (nodes[nodeRow, nodeCol + 1].color == 0 || nodes[nodeRow, nodeCol + 1].color == 2)
             {
                 return;
@@ -263,9 +193,23 @@ namespace TilePuzzleSolver
                 }
                 else if (nodes[nodeRow, i].color == 4)
                 {
-                    if (isWaterElectrified(nodeRow, nodeCol + 1))
+                    if (isWaterElectrified(nodeRow, i))
                     {
-                        return;
+                        if (checkedNode.color != 1)
+                        {
+                            //dummyNode = new Node(6);
+                            //checkedNode.edges.Add(dummyNode);
+                            //dummyNode.edges.Add(checkedNode);
+                            //checkedNode.however this specific edge is signified.isEdgeScented = true;
+                            //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
+
+                            //dummyNode.however this specific edge is signified.isEdgeScented = true;
+                            //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                     else
                     {
@@ -288,7 +232,129 @@ namespace TilePuzzleSolver
 
         public void checkEdgeDown(Node checkedNode, int nodeRow, int nodeCol)
         {
-            
+            if(nodeRow + 1 == rows)
+            {
+                return;
+            }
+            if (nodes[nodeRow + 1, nodeCol].color == 0 || nodes[nodeRow + 1, nodeCol].color == 2)
+            {
+                return;
+            }
+            else if (nodes[nodeRow + 1, nodeCol].color == 3 || nodes[nodeRow + 1, nodeCol].color == 6)
+            {
+                nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
+                //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
+            }
+            else if (nodes[nodeRow + 1, nodeCol].color == 1)
+            {
+                nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
+                //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
+                //checkedNode.however this specific edge is signified.isEdgeScented = true;
+                //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
+                //nodes[nodeRow + 1,nodeCol].however this specific edge is signified.isEdgeScented = true;
+                //nodes[nodeRow + 1,nodeCol].however this specific edge is signified.isEdgeOrangeScented = true;
+            }
+            else if (nodes[nodeRow + 1, nodeCol].color == 4)
+            {
+                if (isWaterElectrified(nodeRow + 1, nodeCol))
+                {
+                    return;
+                }
+                else
+                {
+                    nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
+                    //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
+                }
+            }
+            else if (nodes[nodeRow + 1, nodeCol].color == 5)
+            {
+                if (rows == nodeRow + 2)
+                {
+                    //nodes[nodeRow + 1, nodeCol].edges.Add(checkedNode);
+                    //checkedNode.edges.Add(nodes[nodeRow + 1, nodeCol]);
+                    return;
+                }
+
+                int i = nodeRow + 1;
+
+                while (i < rows && nodes[i, nodeCol].color == 5)
+                {
+                    i++;
+                }
+
+                if (nodes[i, nodeCol].color == 3 || nodes[i, nodeCol].color == 6)
+                {
+                    nodes[i, nodeCol].edges[2] = checkedNode;
+                    //checkedNode.edges.Add(nodes[i, nodeCol]);
+                }
+                else if (nodes[i, nodeCol].color == 0)
+                {
+                    return;
+                }
+                else if (nodes[i, nodeCol].color == 2)
+                {
+                    if (checkedNode.color != 1)
+                    {
+                        //dummyNode = new Node(6);
+                        //checkedNode.edges.Add(dummyNode);
+                        //dummyNode.edges.Add(checkedNode);
+                        //checkedNode.however this specific edge is signified.isEdgeScented = true;
+                        //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
+
+                        //dummyNode.however this specific edge is signified.isEdgeScented = true;
+                        //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                    }
+                }
+                else if (nodes[i, nodeCol].color == 4)
+                {
+                    if (isWaterElectrified(i, nodeCol))
+                    {
+                        if (checkedNode.color != 1)
+                        {
+                            //dummyNode = new Node(6);
+                            //checkedNode.edges.Add(dummyNode);
+                            //dummyNode.edges.Add(checkedNode);
+                            //checkedNode.however this specific edge is signified.isEdgeScented = true;
+                            //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
+
+                            //dummyNode.however this specific edge is signified.isEdgeScented = true;
+                            //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        nodes[i, nodeCol].edges[2] = checkedNode;
+                        //checkedNode.edges.Add(nodes[i, nodeCol]);
+                    }
+                }
+                else if (nodes[i, nodeCol].color == 1)
+                {
+                    nodes[i, nodeCol].edges[2] = checkedNode;
+                    //checkedNode.edges.Add(nodes[i, nodeCol]);
+                    //checkedNode.however this specific edge is signified.isEdgeScented = true;
+                    //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
+                    //nodes[i, nodeCol].however this specific edge is signified.isEdgeScented = true;
+                    //nodes[i, nodeCol].however this specific edge is signified.isEdgeOrangeScented = true;
+                }
+            }
+        }
+
+        public void resetGraphEdges()
+        {
+            for(int r = 0; r < rows; r++)
+            {
+                for(int c = 0; c < cols; c++)
+                {
+                    nodes[r, c].resetNodeRelations();
+                }
+            }
+
+            startNode.resetNodeRelations();
+            endNode.resetNodeRelations();
         }
 
         public bool isWaterElectrified(int waterRow, int waterCol)

@@ -224,6 +224,14 @@ namespace TilePuzzleSolver
                 }
             }
         }
+
+        private void solveButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
+            tilePuzzle.solve();
+
+            //Go through the path and draw/highlight it on the screen.
+        }
     }
 
 }

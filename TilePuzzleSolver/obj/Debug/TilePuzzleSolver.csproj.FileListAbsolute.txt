@@ -17,7 +17,6 @@ C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\Ti
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.pdb
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.exe
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\TilePuzzleSolver.pdb
-C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csprojResolveAssemblyReference.cache
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\MainWindow.g.cs
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\App.g.cs
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver_MarkupCompile.cache
