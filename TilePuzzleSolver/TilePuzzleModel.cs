@@ -122,11 +122,11 @@ namespace TilePuzzleSolver
             {
                 return;
             }
-            if (checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol))
+            if (nodeCol + 1 == cols)
             {
                 return;
             }
-            if (nodeCol + 1 == cols)
+            if (checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol) && nodes[nodeRow, nodeCol + 1].color != 5)
             {
                 return;
             }
@@ -170,7 +170,7 @@ namespace TilePuzzleSolver
                     addEdges(nodeRow, nodeCol, nodeRow, i, checkedNode, endNode, true);
                     return;
                 }
-                if (checkedNode.color == 2)
+                if (checkedNode.color == 2 || (checkedNode.color == 4 && isWaterElectrified(nodeRow,nodeCol)))
                 {
                     Node dummyNode = new Node(6);
                     addEdges(nodeRow, i, -1, -1, nodes[nodeRow, i], dummyNode, true);
@@ -225,11 +225,11 @@ namespace TilePuzzleSolver
             {
                 return;
             }
-            if(checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol))
+            if (nodeRow + 1 == rows)
             {
                 return;
             }
-            if(nodeRow + 1 == rows)
+            if (checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol) && nodes[nodeRow + 1, nodeCol].color != 5)
             {
                 return;
             }
@@ -273,7 +273,7 @@ namespace TilePuzzleSolver
                     addEdges(nodeRow, nodeCol, i - 1, nodeCol, checkedNode, nodes[i - 1, nodeCol], true);
                     return;
                 }
-                else if (checkedNode.color == 2)
+                else if (checkedNode.color == 2 || (checkedNode.color == 4 && isWaterElectrified(nodeRow,nodeCol)))
                 {
                     Node dummyNode = new Node(6);
                     addEdges(i, nodeCol, -1, -1, nodes[i, nodeCol], dummyNode, true);
