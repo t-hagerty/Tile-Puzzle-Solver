@@ -118,7 +118,19 @@ namespace TilePuzzleSolver
 
         public void checkEdgeLeft(Node checkedNode, int nodeRow, int nodeCol)
         {
+            if (checkedNode.color == 0)
+            {
+                return;
+            }
+            if (checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol))
+            {
+                return;
+            }
             if (nodeCol + 1 == cols)
+            {
+                return;
+            }
+            if (checkedNode.color == 2 && nodes[nodeRow, nodeCol + 1].color != 5)
             {
                 return;
             }
@@ -128,17 +140,11 @@ namespace TilePuzzleSolver
             }
             else if (nodes[nodeRow, nodeCol + 1].color == 3 || nodes[nodeRow, nodeCol + 1].color == 6)
             {
-                nodes[nodeRow, nodeCol + 1].edges[3] = checkedNode;
-                //checkedNode.edges.Add(nodes[nodeRow,nodeCol + 1]);
+                addEdges(nodeRow, nodeCol, nodeRow, nodeCol + 1, checkedNode, nodes[nodeRow, nodeCol + 1], false);
             }
             else if (nodes[nodeRow, nodeCol + 1].color == 1)
             {
-                nodes[nodeRow, nodeCol + 1].edges[3] = checkedNode;
-                //checkedNode.edges.Add(nodes[nodeRow,nodeCol + 1]);
-                //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                //nodes[nodeRow,nodeCol+1].however this specific edge is signified.isEdgeScented = true;
-                //nodes[nodeRow,nodeCol + 1].however this specific edge is signified.isEdgeOrangeScented = true;
+                addEdges(nodeRow, nodeCol, nodeRow, nodeCol + 1, checkedNode, nodes[nodeRow, nodeCol + 1], false);
             }
             else if (nodes[nodeRow, nodeCol + 1].color == 4)
             {
@@ -148,30 +154,31 @@ namespace TilePuzzleSolver
                 }
                 else
                 {
-                    nodes[nodeRow, nodeCol + 1].edges[3] = checkedNode;
-                    //checkedNode.edges.Add(nodes[nodeRow,nodeCol + 1]);
+                    addEdges(nodeRow, nodeCol, nodeRow, nodeCol + 1, checkedNode, nodes[nodeRow, nodeCol + 1], false);
                 }
             }
             else if (nodes[nodeRow, nodeCol + 1].color == 5)
             {
-                if (cols == nodeCol + 2)
-                {
-                    //endNode.edges.Add(checkedNode);
-                    //checkedNode.edges.Add(endNode);
-                    return;
-                }
-                
                 int i = nodeCol + 1;
 
                 while (i < cols && nodes[nodeRow, i].color == 5)
                 {
                     i++;
                 }
+                if (cols == i + 1)
+                {
+                    addEdges(nodeRow, nodeCol, nodeRow, i, checkedNode, endNode, true);
+                    return;
+                }
+                if (checkedNode.color == 2)
+                {
+                    Node dummyNode = new Node(6);
+                    addEdges(nodeRow, i, -1, -1, nodes[nodeRow, i], dummyNode, true);
+                }
 
                 if (nodes[nodeRow, i].color == 3 || nodes[nodeRow, i].color == 6)
                 {
-                    nodes[nodeRow, i].edges[3] = checkedNode;
-                    //checkedNode.edges.Add(nodes[nodeRow,i]);
+                    addEdges(nodeRow, nodeCol, nodeRow, i, checkedNode, nodes[nodeRow, i], true);
                 }
                 else if (nodes[nodeRow, i].color == 0)
                 {
@@ -179,32 +186,20 @@ namespace TilePuzzleSolver
                 }
                 else if(nodes[nodeRow, i].color == 2)
                 {
-                    if (checkedNode.color != 1)
+                    if (checkedNode.color != 1) //No reason to make the dummy node/edge here if the tile we'd return back to will re-give orange scent
                     {
-                        //dummyNode = new Node(6);
-                        //checkedNode.edges.Add(dummyNode);
-                        //dummyNode.edges.Add(checkedNode);
-                        //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                        //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
-
-                        //dummyNode.however this specific edge is signified.isEdgeScented = true;
-                        //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                        Node dummyNode = new Node(6);
+                        addEdges(nodeRow, nodeCol, -1, -1, checkedNode, dummyNode, true);
                     }
                 }
                 else if (nodes[nodeRow, i].color == 4)
                 {
                     if (isWaterElectrified(nodeRow, i))
                     {
-                        if (checkedNode.color != 1)
+                        if (checkedNode.color != 1) //No reason to make the dummy node/edge here if the tile we'd return back to will re-give orange scent
                         {
-                            //dummyNode = new Node(6);
-                            //checkedNode.edges.Add(dummyNode);
-                            //dummyNode.edges.Add(checkedNode);
-                            //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                            //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
-
-                            //dummyNode.however this specific edge is signified.isEdgeScented = true;
-                            //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                            Node dummyNode = new Node(6);
+                            addEdges(nodeRow, nodeCol, -1, -1, checkedNode, dummyNode, true);
                         }
                         else
                         {
@@ -213,18 +208,12 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        nodes[nodeRow, i].edges[3] = checkedNode;
-                        //checkedNode.edges.Add(nodes[nodeRow,i]);
+                        addEdges(nodeRow, nodeCol, nodeRow, i, checkedNode, nodes[nodeRow, i], true);
                     }
                 }
                 else if (nodes[nodeRow, i].color == 1)
                 {
-                    nodes[nodeRow, i].edges[3] = checkedNode;
-                    //checkedNode.edges.Add(nodes[nodeRow,i]);
-                    //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                    //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                    //nodes[nodeRow,i].however this specific edge is signified.isEdgeScented = true;
-                    //nodes[nodeRow,i].however this specific edge is signified.isEdgeOrangeScented = true;
+                    addEdges(nodeRow, nodeCol, nodeRow, i, checkedNode, nodes[nodeRow, i], true);
                 }
 
             }
@@ -232,7 +221,19 @@ namespace TilePuzzleSolver
 
         public void checkEdgeDown(Node checkedNode, int nodeRow, int nodeCol)
         {
+            if(checkedNode.color == 0)
+            {
+                return;
+            }
+            if(checkedNode.color == 4 && isWaterElectrified(nodeRow, nodeCol))
+            {
+                return;
+            }
             if(nodeRow + 1 == rows)
+            {
+                return;
+            }
+            if (checkedNode.color == 2 && nodes[nodeRow + 1, nodeCol].color != 5)
             {
                 return;
             }
@@ -242,17 +243,11 @@ namespace TilePuzzleSolver
             }
             else if (nodes[nodeRow + 1, nodeCol].color == 3 || nodes[nodeRow + 1, nodeCol].color == 6)
             {
-                nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
-                //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
+                addEdges(nodeRow, nodeCol, nodeRow + 1, nodeCol, checkedNode, nodes[nodeRow + 1, nodeCol], false);
             }
             else if (nodes[nodeRow + 1, nodeCol].color == 1)
             {
-                nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
-                //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
-                //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                //nodes[nodeRow + 1,nodeCol].however this specific edge is signified.isEdgeScented = true;
-                //nodes[nodeRow + 1,nodeCol].however this specific edge is signified.isEdgeOrangeScented = true;
+                addEdges(nodeRow, nodeCol, nodeRow + 1, nodeCol, checkedNode, nodes[nodeRow + 1, nodeCol], false);
             }
             else if (nodes[nodeRow + 1, nodeCol].color == 4)
             {
@@ -262,30 +257,30 @@ namespace TilePuzzleSolver
                 }
                 else
                 {
-                    nodes[nodeRow + 1, nodeCol].edges[2] = checkedNode;
-                    //checkedNode.edges.Add(nodes[nodeRow + 1,nodeCol]);
+                    addEdges(nodeRow, nodeCol, nodeRow + 1, nodeCol, checkedNode, nodes[nodeRow + 1, nodeCol], false);
                 }
             }
             else if (nodes[nodeRow + 1, nodeCol].color == 5)
             {
-                if (rows == nodeRow + 2)
-                {
-                    //nodes[nodeRow + 1, nodeCol].edges.Add(checkedNode);
-                    //checkedNode.edges.Add(nodes[nodeRow + 1, nodeCol]);
-                    return;
-                }
-
                 int i = nodeRow + 1;
 
                 while (i < rows && nodes[i, nodeCol].color == 5)
                 {
                     i++;
                 }
-
-                if (nodes[i, nodeCol].color == 3 || nodes[i, nodeCol].color == 6)
+                if (rows == i)
                 {
-                    nodes[i, nodeCol].edges[2] = checkedNode;
-                    //checkedNode.edges.Add(nodes[i, nodeCol]);
+                    addEdges(nodeRow, nodeCol, i - 1, nodeCol, checkedNode, nodes[i - 1, nodeCol], true);
+                    return;
+                }
+                else if (checkedNode.color == 2)
+                {
+                    Node dummyNode = new Node(6);
+                    addEdges(i, nodeCol, -1, -1, nodes[i, nodeCol], dummyNode, true);
+                }
+                else if (nodes[i, nodeCol].color == 3 || nodes[i, nodeCol].color == 6)
+                {
+                    addEdges(nodeRow, nodeCol, i, nodeCol, checkedNode, nodes[i, nodeCol], true);
                 }
                 else if (nodes[i, nodeCol].color == 0)
                 {
@@ -295,14 +290,8 @@ namespace TilePuzzleSolver
                 {
                     if (checkedNode.color != 1)
                     {
-                        //dummyNode = new Node(6);
-                        //checkedNode.edges.Add(dummyNode);
-                        //dummyNode.edges.Add(checkedNode);
-                        //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                        //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
-
-                        //dummyNode.however this specific edge is signified.isEdgeScented = true;
-                        //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                        Node dummyNode = new Node(6);
+                        addEdges(nodeRow, nodeCol, -1, -1, checkedNode, dummyNode, true);
                     }
                 }
                 else if (nodes[i, nodeCol].color == 4)
@@ -311,14 +300,8 @@ namespace TilePuzzleSolver
                     {
                         if (checkedNode.color != 1)
                         {
-                            //dummyNode = new Node(6);
-                            //checkedNode.edges.Add(dummyNode);
-                            //dummyNode.edges.Add(checkedNode);
-                            //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                            //checkedNode.however this specific edge is signified.isEdgeOrangeScented = false;
-
-                            //dummyNode.however this specific edge is signified.isEdgeScented = true;
-                            //dummyNode.however this specific edge is signified.isEdgeOrangeScented = false;
+                            Node dummyNode = new Node(6);
+                            addEdges(nodeRow, nodeCol, -1, -1, checkedNode, dummyNode, true);
                         }
                         else
                         {
@@ -327,18 +310,12 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        nodes[i, nodeCol].edges[2] = checkedNode;
-                        //checkedNode.edges.Add(nodes[i, nodeCol]);
+                        addEdges(nodeRow, nodeCol, i, nodeCol, checkedNode, nodes[i, nodeCol], true);
                     }
                 }
                 else if (nodes[i, nodeCol].color == 1)
                 {
-                    nodes[i, nodeCol].edges[2] = checkedNode;
-                    //checkedNode.edges.Add(nodes[i, nodeCol]);
-                    //checkedNode.however this specific edge is signified.isEdgeScented = true;
-                    //checkedNode.however this specific edge is signified.isEdgeOrangeScented = true;
-                    //nodes[i, nodeCol].however this specific edge is signified.isEdgeScented = true;
-                    //nodes[i, nodeCol].however this specific edge is signified.isEdgeOrangeScented = true;
+                    addEdges(nodeRow, nodeCol, i, nodeCol, checkedNode, nodes[i, nodeCol], true);
                 }
             }
         }
@@ -355,6 +332,35 @@ namespace TilePuzzleSolver
 
             startNode.resetNodeRelations();
             endNode.resetNodeRelations();
+        }
+        
+        public void addEdges(int row1, int col1, int row2, int col2, Node node1, Node node2, bool goesOverPurple)
+        {
+            if(node1.color == 1)
+            {
+                node2.edges.Add(new Edge(row1, col1, row2, col2, node1, "orange"));
+            }
+            else if(goesOverPurple)
+            {
+                node2.edges.Add(new Edge(row1, col1, row2, col2, node1, "lemon"));
+            }
+            else
+            {
+                node2.edges.Add(new Edge(row1, col1, row2, col2, node1, ""));
+            }
+            if (node2.color == 1)
+            {
+                node1.edges.Add(new Edge(row2, col2, row1, col1, node2, "orange"));
+            }
+            else if(goesOverPurple)
+            {
+                node1.edges.Add(new Edge(row2, col2, row1, col1, node2, "lemon"));
+            }
+            else
+            {
+                node1.edges.Add(new Edge(row2, col2, row1, col1, node2, ""));
+            }
+
         }
 
         public bool isWaterElectrified(int waterRow, int waterCol)

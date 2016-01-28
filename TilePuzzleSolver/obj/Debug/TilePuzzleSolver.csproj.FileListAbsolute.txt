@@ -25,3 +25,4 @@ C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\Ma
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.g.resources
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.Properties.Resources.resources
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csproj.GenerateResource.Cache
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csprojResolveAssemblyReference.cache
