@@ -50,8 +50,10 @@ namespace TilePuzzleSolver
             TilePuzzle_UniformGrid.Columns = puzzleColumns + 2;
             TilePuzzle_UniformGrid.Rows = puzzleRows;
             tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
-            TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns + 2) * 25;
+            TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns) * 25;
             TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+            TilePuzzleContainer_Grid.Width = TilePuzzle_UniformGrid.Width;
+            TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
 
             Button[,] newTilePuzzleGrid = new Button[puzzleRows, puzzleColumns + 2];
 
@@ -60,11 +62,13 @@ namespace TilePuzzleSolver
                 newTilePuzzleGrid[r, 0] = new Button();
                 newTilePuzzleGrid[r, 0].Background = new SolidColorBrush(Colors.Gray);
                 newTilePuzzleGrid[r, 0].IsEnabled = false;
+                newTilePuzzleGrid[r, 0].BorderThickness = new Thickness(0);
 
                 for (int c = 1; c <= puzzleColumns; c++)
                 {
                     newTilePuzzleGrid[r, c] = new Button();
                     newTilePuzzleGrid[r, c].Click += editTile_Click;
+                    newTilePuzzleGrid[r, c].BorderThickness = new Thickness(0);
                     switch (tilePuzzle.nodes[r,c-1].color)
                     {
                         case 0:
@@ -97,6 +101,7 @@ namespace TilePuzzleSolver
                 newTilePuzzleGrid[r, puzzleColumns + 1] = new Button();
                 newTilePuzzleGrid[r, puzzleColumns + 1].Background = new SolidColorBrush(Colors.Gray);
                 newTilePuzzleGrid[r, puzzleColumns + 1].IsEnabled = false;
+                newTilePuzzleGrid[r, puzzleColumns + 1].BorderThickness = new Thickness(0);
             }
 
             tilePuzzleGrid = newTilePuzzleGrid;
@@ -231,6 +236,46 @@ namespace TilePuzzleSolver
             tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
+        }
+
+        private void graphButton_Click(object sender, RoutedEventArgs e)
+        {
+            tilePuzzle.buildGraph();
+
+            Canvas graph = new Canvas();
+            graph.Width = TilePuzzleContainer_Grid.Width;
+            graph.Height = TilePuzzleContainer_Grid.Height;
+            TilePuzzleContainer_Grid.Children.Add(graph);
+
+            for(int r = 0; r < puzzleRows; r++)
+            {
+                for(int c = 0; c < puzzleColumns; c++)
+                {
+                    foreach(Edge anEdge in tilePuzzle.nodes[r,c].edges)
+                    {
+                        Rectangle edge = new Rectangle();
+                        edge.Fill = new SolidColorBrush(Colors.Black);
+                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -1 && anEdge.parentRow != -1))
+                        {
+                            //vertical edge
+                            edge.Width = 3;
+                            edge.Height = 10 + ((Math.Max(anEdge.parentRow, anEdge.childRow) - Math.Min(anEdge.parentRow, anEdge.childRow) - 1) * 25);
+                            graph.Children.Add(edge);
+                            Canvas.SetTop(edge, (25 * Math.Min(anEdge.parentRow, anEdge.childRow) + 20));
+                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
+                        }
+                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -1 && anEdge.parentCol != -1))
+                        {
+                            //horizontal edge
+                            edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
+                            edge.Height = 3;
+                            graph.Children.Add(edge);
+                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
+                            Canvas.SetLeft(edge, 25 + (25 * Math.Min(anEdge.parentCol, anEdge.childCol) + 20));
+                        }
+                    }
+                }
+            }
         }
     }
 

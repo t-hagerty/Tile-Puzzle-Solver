@@ -9,7 +9,7 @@
     <Grid>
         <Grid HorizontalAlignment="Left" Height="94" Margin="0,575,0,0" VerticalAlignment="Top" Width="1042" Background="#FFCDCDCD">
             <Button x:Name="Solve_Button" Content="SOLVE" HorizontalAlignment="Left" Height="35" Margin="15,5,0,49" Width="70" Click="solveButton_Click"/>
-            <Button x:Name="Play_Button" Content="PLAY" HorizontalAlignment="Left" Height="35" Margin="15,45,0,9" Width="70"/>
+            <Button x:Name="ShowGraph" Content="GRAPH" HorizontalAlignment="Left" Height="35" Margin="15,45,0,9" Width="70" Click="graphButton_Click"/>
             <Label x:Name="Size" Content="SIZE:" HorizontalAlignment="Left" Margin="104,22,0,0" VerticalAlignment="Top" Height="41" Width="82" FontSize="26.667"/>
             <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="29" Margin="250,32,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
             <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="29" Margin="173,33,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
@@ -29,8 +29,10 @@
             <Button x:Name="Pink_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="17,436,0,0" VerticalAlignment="Top" Width="66" Background="#FFFF6CEB" Click="pinkButton_Click" IsEnabled="False"/>
         </Grid>
 
-        <ScrollViewer HorizontalAlignment="Left" Height="575" Margin="100,0,0,0" HorizontalScrollBarVisibility="Visible" VerticalAlignment="Top" Width="935">
-            <UniformGrid x:Name="TilePuzzle_UniformGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Height="100" Width="100"/>
+        <ScrollViewer x:Name="ScrollPuzzleWindow" HorizontalAlignment="Left" Height="575" Margin="100,0,0,0" HorizontalScrollBarVisibility="Visible" VerticalAlignment="Top" Width="935">
+            <Grid x:Name="TilePuzzleContainer_Grid" HorizontalAlignment="Center" VerticalAlignment="Center" Height="100" Width="100">
+                <UniformGrid x:Name="TilePuzzle_UniformGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Height="100" Width="100"/>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Window>
