@@ -365,7 +365,8 @@ namespace TilePuzzleSolver
 
         public bool isWaterElectrified(int waterRow, int waterCol)
         {
-            if ((waterRow - 1 >= 0 && nodes[waterRow - 1, waterCol + 1].color == 2) || (waterRow + 1 < rows && nodes[waterRow + 1, waterCol + 1].color == 2) || (cols > waterCol + 2 && nodes[waterRow, waterCol + 2].color == 2))
+            if ((waterRow - 1 >= 0 && nodes[waterRow - 1, waterCol].color == 2) || (waterRow + 1 < rows && nodes[waterRow + 1, waterCol].color == 2) || 
+                    (cols > waterCol + 1 && nodes[waterRow, waterCol + 1].color == 2) || (waterCol - 1 >= 0 && nodes[waterRow, waterCol - 1].color == 2))
             {
                 return true;
             }

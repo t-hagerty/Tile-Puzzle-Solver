@@ -32,7 +32,7 @@ namespace TilePuzzleSolver
             InitializeComponent();
 
             int[,] startPuzzle = new int[4,39] { {4, 3, 2, 6, 3, 5, 6, 2, 3, 0, 2, 6, 0, 3, 6, 1, 2, 0, 0, 1, 0, 2, 6, 2, 2, 3, 3, 4, 2, 4, 1, 3, 3, 3, 0, 3, 3, 3, 0},
-                                                 {3, 1, 5, 4, 1, 0, 0, 4, 2, 0, 0, 4, 4, 4, 0, 0, 0, 6, 6, 0, 4, 6, 3, 0, 5, 2, 4, 2, 5, 5, 6, 4, 0, 3, 0, 3, 0, 3, 0},
+                                                 {3, 1, 5, 4, 1, 0, 0, 4, 2, 0, 0, 4, 4, 4, 0, 0, 0, 6, 6, 0, 4, 6, 3, 0, 5, 1, 4, 1, 5, 5, 6, 4, 0, 3, 0, 3, 0, 3, 0},
                                                  {6, 0, 6, 6, 4, 4, 0, 1, 0, 6, 4, 5, 0, 6, 2, 3, 5, 1, 5, 2, 5, 5, 0, 0, 6, 1, 4, 5, 5, 4, 2, 6, 0, 3, 0, 3, 0, 3, 0},
                                                  {3, 2, 4, 2, 0, 6, 3, 1, 5, 5, 1, 6, 0, 1, 6, 1, 0, 4, 4, 6, 1, 4, 3, 1, 6, 4, 5, 1, 2, 4, 6, 6, 3, 3, 3, 3, 0, 3, 3}};
             tilePuzzle = new TilePuzzleModel(puzzleRows, puzzleColumns, startPuzzle);
@@ -251,7 +251,10 @@ namespace TilePuzzleSolver
             {
                 for(int c = 0; c < puzzleColumns; c++)
                 {
-                    foreach(Edge anEdge in tilePuzzle.nodes[r,c].edges)
+                    //FOR TESTING:
+                    int i = 0;
+
+                    foreach (Edge anEdge in tilePuzzle.nodes[r,c].edges)
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
@@ -262,7 +265,11 @@ namespace TilePuzzleSolver
                             edge.Height = 10 + ((Math.Max(anEdge.parentRow, anEdge.childRow) - Math.Min(anEdge.parentRow, anEdge.childRow) - 1) * 25);
                             graph.Children.Add(edge);
                             Canvas.SetTop(edge, (25 * Math.Min(anEdge.parentRow, anEdge.childRow) + 20));
-                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
+                            //Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
+
+                            //FOR TESTING:
+                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
+                            i = i + 5;
                         }
                         else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -1 && anEdge.parentCol != -1))
                         {
@@ -270,8 +277,12 @@ namespace TilePuzzleSolver
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
                             edge.Height = 3;
                             graph.Children.Add(edge);
-                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
+                            //Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
                             Canvas.SetLeft(edge, 25 + (25 * Math.Min(anEdge.parentCol, anEdge.childCol) + 20));
+
+                            //FOR TESTING:
+                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 3 + i);
+                            i = i + 5;
                         }
                     }
                 }
