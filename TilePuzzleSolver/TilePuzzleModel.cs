@@ -35,7 +35,7 @@ namespace TilePuzzleSolver
         {
             Node[,] newSizePuzzle = new Node[newRows, newCols];
 
-            if (newRows >= rows)
+            if (newRows > rows || newCols > cols)
             {
                 for (int r = 0; r < rows; r++)
                 {
@@ -93,24 +93,22 @@ namespace TilePuzzleSolver
                 checkForEdgeInDirection(startNode, r, -1, 1, 0); //-1 as column so it will check node at col = 0
             }
 
-            for(int r = 0; r < rows - 1; r++)
+            for(int r = 0; r < rows; r++)
             {
-                for(int c = 0; c < cols - 1; c++)
+                for(int c = 0; c < cols; c++)
                 {
+                    if((r == 1 || r == 2) && c == 24)
+                    {
+                        r = r;
+                    }
                     //Check Nodes to the right and below the current node rather than in all 4 directions (doing so would perform duplicate checks)
                     findEdgesForNode(nodes[r, c], r, c);
                 }
             }
 
-            for(int c = 0; c < cols - 1; c++)
+            for (int r = 0; r < rows; r++)
             {
-                checkForEdgeInDirection(nodes[rows - 1, c], rows -1, c, 1, 0);
-            }
-
-            for (int r = 0; r < rows - 1; r++)
-            {
-                nodes[r, cols - 1].edges.Add(new Edge(r, cols - 1, rows, cols, endNode, "")); //Even if this node shouldnt connect to end, i.e. if node is red, but in any of these cases, the node is inaccessible otherwise, so it doesn't matter.
-                checkForEdgeInDirection(nodes[r, cols - 1], r, cols - 1, 0 , 1);
+                nodes[r, cols - 1].edges.Add(new Edge(r, cols - 1, r, cols, endNode, "")); //Even if this node shouldnt connect to end, i.e. if node is red, but in any of these cases, the node is inaccessible otherwise, so it doesn't matter.
             }
         }
 
@@ -130,7 +128,7 @@ namespace TilePuzzleSolver
 
         public void findEdgesForNode(Node nodeBeingChecked, int row, int col)
         {
-            switch (nodeBeingChecked.color)
+                switch (nodeBeingChecked.color)
             {
                 case 0:
                     break;
@@ -139,7 +137,7 @@ namespace TilePuzzleSolver
                     checkForEdgeInDirection(nodeBeingChecked, row, col, 0, 1);
                     break;
                 case 2:
-                    if (nodes[row, col + 1].color == 5) //Need to check if a dummy node needs to be made for a leftward direction because we normally only check rightwards (which is sufficient except in special cases like this)
+                    if (col + 1 < cols && nodes[row, col + 1].color == 5) //Need to check if a dummy node needs to be made for a leftward direction because we normally only check rightwards (which is sufficient except in special cases like this)
                     {
                         int i = col + 2;
                         while (i < cols && nodes[row, i].color == 5)
@@ -149,7 +147,7 @@ namespace TilePuzzleSolver
                         if (i == cols) { i--; }
                         checkForEdgeInDirection(nodes[row, i], row, i, 0, -1);
                     }
-                    if (nodes[row + 1, col].color == 5) //Need to check if a dummy node needs to be made for an upward direction because we normally only check downwards (which is sufficient except in special cases like this)
+                    if (row + 1 < rows && nodes[row + 1, col].color == 5) //Need to check if a dummy node needs to be made for an upward direction because we normally only check downwards (which is sufficient except in special cases like this)
                     {
                         int i = row + 2;
                         while (i < rows && nodes[i, col].color == 5)
@@ -167,7 +165,7 @@ namespace TilePuzzleSolver
                 case 4:
                     if (isWaterElectrified(row, col))
                     {
-                        if (nodes[row, col + 1].color == 5) //Need to check if a dummy node needs to be made for a leftward direction because we normally only check rightwards (which is sufficient except in special cases like this)
+                        if (col + 1 < cols && nodes[row, col + 1].color == 5) //Need to check if a dummy node needs to be made for a leftward direction because we normally only check rightwards (which is sufficient except in special cases like this)
                         {
                             int i = col + 2;
                             while (i < cols && nodes[row, i].color == 5)
@@ -177,7 +175,7 @@ namespace TilePuzzleSolver
                             if (i == cols) { i--; }
                             checkForEdgeInDirection(nodes[row, i], row, i, 0, -1);
                         }
-                        if (nodes[row + 1, col].color == 5) //Need to check if a dummy node needs to be made for an upward direction because we normally only check downwards (which is sufficient except in special cases like this)
+                        if (row + 1 < rows && nodes[row + 1, col].color == 5) //Need to check if a dummy node needs to be made for an upward direction because we normally only check downwards (which is sufficient except in special cases like this)
                         {
                             int i = row + 2;
                             while (i < rows && nodes[i, col].color == 5)
@@ -200,10 +198,14 @@ namespace TilePuzzleSolver
                     *if standing on purple, and any tile the dummy node would send them to is already accessible from the purple tile.
                     */
 
-                    if (((row + 1 < rows && nodes[row + 1, col].color == 0) && (row - 1 >= 0 && !(nodes[row - 1, col].color == 0 || nodes[row - 1, col].color == 2 || (nodes[row - 1, col].color == 4 && isWaterElectrified(row - 1, col)))))
-                        || ((row - 1 >= 0 && nodes[row - 1, col].color == 0) && (row + 1 < rows && !(nodes[row + 1, col].color == 0 || nodes[row + 1, col].color == 2 || (nodes[row + 1, col].color == 4 && isWaterElectrified(row + 1, col)))))
-                        || (((col + 1 < cols && nodes[row, col + 1].color == 0) || col + 1 == cols) && (col - 1 >= 0 && !(nodes[row, col - 1].color == 0 || nodes[row, col - 1].color == 2 || (nodes[row, col - 1].color == 4 && isWaterElectrified(row, col - 1)))))
-                        || (((col - 1 >= 0 && nodes[row, col - 1].color == 0) || col - 1 == -1) && (col + 1 < cols && !(nodes[row, col + 1].color == 0 || nodes[row, col + 1].color == 2 || (nodes[row, col + 1].color == 4 && isWaterElectrified(row, col + 1))))))
+                    if (((row + 1 < rows && nodes[row + 1, col].color == 0) && 
+                        (row - 1 >= 0 && !(nodes[row - 1, col].color == 0 || nodes[row - 1, col].color == 2 || (nodes[row - 1, col].color == 4 && isWaterElectrified(row - 1, col)))))
+                        || ((row - 1 >= 0 && nodes[row - 1, col].color == 0) && 
+                        (row + 1 < rows && !(nodes[row + 1, col].color == 0 || nodes[row + 1, col].color == 2 || (nodes[row + 1, col].color == 4 && isWaterElectrified(row + 1, col)))))
+                        || (((col + 1 < cols && nodes[row, col + 1].color == 0) || col + 1 == cols) && 
+                        (col - 1 >= 0 && !(nodes[row, col - 1].color == 0 || nodes[row, col - 1].color == 2 || (nodes[row, col - 1].color == 4 && isWaterElectrified(row, col - 1)))))
+                        || (((col - 1 >= 0 && nodes[row, col - 1].color == 0) || col - 1 == -1) && 
+                        (col + 1 < cols && !(nodes[row, col + 1].color == 0 || nodes[row, col + 1].color == 2 || (nodes[row, col + 1].color == 4 && isWaterElectrified(row, col + 1))))))
                     {
                         checkForEdgeInDirection(nodeBeingChecked, row, col, 1, 0);
                         checkForEdgeInDirection(nodeBeingChecked, row, col, 0, 1);
@@ -232,7 +234,7 @@ namespace TilePuzzleSolver
                     break;
                 case 1:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (adjacentNode.color == 5 && !(row + dy == 0 || row + dy == rows - 1 || col + dx == 0 || col + dx == cols - 1 || nodes[row + dy + dy, col + dx + dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row -dy, col - dx].color == 0))
                     {
                         break;
                     }
@@ -245,7 +247,7 @@ namespace TilePuzzleSolver
                     break;
                 case 3:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (adjacentNode.color == 5 && !(row + dy == 0 || row + dy == rows - 1 || col + dx == 0 || col + dx == cols - 1 || nodes[row + dy + dy, col + dx + dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
                     {
                         break;
                     }
@@ -262,7 +264,7 @@ namespace TilePuzzleSolver
                     else
                     {
                         addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                        if (adjacentNode.color == 5 && !(row + dy == 0 || row + dy == rows - 1 || col + dx == 0 || col + dx == cols - 1 || nodes[row + dy + dy, col + dx + dx].color == 0))
+                        if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
                         {
                             break;
                         }
@@ -288,7 +290,7 @@ namespace TilePuzzleSolver
                         nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode; //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops
                     }
 
-                    if(adjacentNode.color == 2 || (adjacentNode.color == 4 && isWaterElectrified(row + slideDY - dy, col + slideDX - dx)))
+                    if(nodeBeingChecked.color != 1 && (adjacentNode.color == 2 || (adjacentNode.color == 4 && isWaterElectrified(row + slideDY - dy, col + slideDX - dx))))
                     {
                         Node dummyNode = new Node(6);
                         addEdge(row, col, -2, -2, nodeBeingChecked, dummyNode, true);
@@ -297,12 +299,19 @@ namespace TilePuzzleSolver
                     else
                     {
                         addEdge(row, col, row + slideDY - dy, col + slideDX - dx, nodeBeingChecked, adjacentNode, true);
-                        addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        if (nodeBeingChecked.color != 5)
+                        {
+                            addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
+                        else if(nodes[row - dy, col - dx].color == 0 || (row - dy < 0 || row - dy >= rows || col - dx < 0 || col - dx >= cols))
+                        {
+                            addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
                     }
                     break;
                 case 6:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (adjacentNode.color == 5 && !(row + dy == 0 || row + dy == rows - 1 || col + dx == 0 || col + dx == cols - 1 || nodes[row + dy + dy, col + dx + dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
                     {
                         break;
                     }
@@ -318,6 +327,12 @@ namespace TilePuzzleSolver
 
         public void addEdge(int rowFrom, int colFrom, int rowTo, int colTo, Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
         {
+            if(edgeGoesFrom.color == 0 || edgeGoesFrom.color == 2 || (edgeGoesFrom.color == 4 && isWaterElectrified(rowFrom, colFrom)) ||
+                edgeGoesTo.color == 0 || edgeGoesTo.color == 2 || (edgeGoesTo.color == 4 && isWaterElectrified(rowTo, colTo)))
+            {
+                return;
+            }
+
             if(edgeGoesTo.color == 1)
             {
                 edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, "orange"));

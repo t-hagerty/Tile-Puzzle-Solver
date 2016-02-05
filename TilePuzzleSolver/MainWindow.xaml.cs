@@ -158,6 +158,13 @@ namespace TilePuzzleSolver
                         break;
                 }
             }
+            else
+            {
+                int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
+                int row = index / (puzzleColumns + 2);
+                int col = (index % (puzzleColumns + 2)) - 1;
+                MessageBox.Show(tilePuzzle.nodes[row, col].edgesToString());
+            }
         }
 
         private void editButton_Click(object sender, RoutedEventArgs e)
@@ -258,7 +265,7 @@ namespace TilePuzzleSolver
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
-                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -1 && anEdge.parentRow != -1))
+                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -2 && anEdge.parentRow != -2))
                         {
                             //vertical edge
                             edge.Width = 3;
@@ -271,7 +278,7 @@ namespace TilePuzzleSolver
                             Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
                             i = i + 5;
                         }
-                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -1 && anEdge.parentCol != -1))
+                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -2 && anEdge.parentCol != -2))
                         {
                             //horizontal edge
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);

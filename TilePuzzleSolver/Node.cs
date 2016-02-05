@@ -37,5 +37,17 @@ namespace TilePuzzleSolver
             edges = new List<Edge>(4);
             parent = null;
         }
+
+        public String edgesToString()
+        {
+            String edgeList = "";
+
+            foreach(Edge anEdge in edges)
+            {
+                edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+            }
+
+            return edgeList;
+        }
     }
 }
