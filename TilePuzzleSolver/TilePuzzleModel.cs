@@ -97,10 +97,10 @@ namespace TilePuzzleSolver
             {
                 for(int c = 0; c < cols; c++)
                 {
-                    if((r == 1 || r == 2) && c == 24)
-                    {
-                        r = r;
-                    }
+                    //if((r == 1 || r == 2) && c == 24)
+                    //{
+                    //    r = r;
+                    //}
                     //Check Nodes to the right and below the current node rather than in all 4 directions (doing so would perform duplicate checks)
                     findEdgesForNode(nodes[r, c], r, c);
                 }
@@ -234,7 +234,7 @@ namespace TilePuzzleSolver
                     break;
                 case 1:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row -dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
                     {
                         break;
                     }
@@ -247,7 +247,7 @@ namespace TilePuzzleSolver
                     break;
                 case 3:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
                     {
                         break;
                     }
@@ -264,7 +264,7 @@ namespace TilePuzzleSolver
                     else
                     {
                         addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                        if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
+                        if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
                         {
                             break;
                         }
@@ -311,7 +311,7 @@ namespace TilePuzzleSolver
                     break;
                 case 6:
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row - dy == 0 || row - dy == rows || col - dx == 0 || col - dx == cols || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
                     {
                         break;
                     }
