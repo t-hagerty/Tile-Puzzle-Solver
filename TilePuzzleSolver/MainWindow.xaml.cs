@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace TilePuzzleSolver
 {
@@ -293,6 +295,60 @@ namespace TilePuzzleSolver
                         }
                     }
                 }
+            }
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog loadFileWindow = new OpenFileDialog();
+            loadFileWindow.Filter = "Text files (*.txt)|*.txt";
+            if(loadFileWindow.ShowDialog() == true)
+            {
+                using (TextReader reader = File.OpenText(loadFileWindow.FileName))
+                {
+                    try
+                    {
+                        int loadedPuzzleRows = int.Parse(reader.ReadLine());
+                        int loadedPuzzleCols = int.Parse(reader.ReadLine());
+
+                        tilePuzzle.resizePuzzle(loadedPuzzleRows, loadedPuzzleCols);
+
+                        for (int r = 0; r < loadedPuzzleRows; r++)
+                        {
+                            for (int c = 0; c < loadedPuzzleCols; c++)
+                            {
+                                tilePuzzle.nodes[r, c] = new Node(int.Parse(reader.ReadLine()));
+                            }
+                        }
+
+                        Row_TextBox.Text = loadedPuzzleRows + "";
+                        Column_TextBox.Text = loadedPuzzleCols + "";
+                    }
+                    catch(FormatException fe)
+                    {
+                        MessageBox.Show("Invalid File!");
+                    }
+                }
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileWindow = new SaveFileDialog();
+            saveFileWindow.Filter = "Text files (*.txt)|*.txt";
+            if(saveFileWindow.ShowDialog() == true)
+            {
+                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+
+                for(int r = 0; r < tilePuzzle.rows; r++)
+                {
+                    for(int c = 0; c < tilePuzzle.cols; c++)
+                    {
+                        fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
+                    }
+                }
+
+                File.WriteAllText(saveFileWindow.FileName, fileText);
             }
         }
     }
