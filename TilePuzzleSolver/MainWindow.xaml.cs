@@ -19,6 +19,8 @@ namespace TilePuzzleSolver
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// Tile Puzzle ViewModel (MainWindow.xaml is the View, TilePuzzleModel is the Model)
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -29,6 +31,9 @@ namespace TilePuzzleSolver
         Button[,] tilePuzzleGrid;
         TilePuzzleModel tilePuzzle;
 
+        /// <summary>
+        /// Constructor for the View/ViewModel of the tile puzzle editor/solver
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -43,6 +48,11 @@ namespace TilePuzzleSolver
             resizeTileGrid(4, 39);   
         }
 
+        /// <summary>
+        /// Resizes the puzzle based on input rows and columns, and rebuilds/replaces the visuals/buttons representing the puzzle in the View.
+        /// </summary>
+        /// <param name="newRows">The new amount of rows of the puzzle</param>
+        /// <param name="newCols">The new amount of columns o the puzzle</param>
         public void resizeTileGrid(int newRows, int newCols)
         {
             TilePuzzle_UniformGrid.Children.Clear();
@@ -117,14 +127,21 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Changes the color of a tile to the selected color if in edit mode.
+        /// 
+        /// If not in edit mode, doubles as a function to pop up info about the edges a node has (for testing purposes)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void editTile_Click(object sender, RoutedEventArgs e)
         {
+            int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
+            int row = index / (puzzleColumns + 2);
+            int col = (index % (puzzleColumns + 2)) - 1;
+
             if (isEditMode)
             {
-                int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
-                int row = index / (puzzleColumns + 2);
-                int col = (index % (puzzleColumns + 2)) - 1;
-
                 switch (selectedColor)
                 {
                     case 0:
@@ -162,13 +179,16 @@ namespace TilePuzzleSolver
             }
             else
             {
-                int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
-                int row = index / (puzzleColumns + 2);
-                int col = (index % (puzzleColumns + 2)) - 1;
                 MessageBox.Show(tilePuzzle.nodes[row, col].edgesToString());
             }
         }
 
+        /// <summary>
+        /// Toggles whether or not the user is in edit mode, that is, if they click on a tile in the puzzle, if it will change to their selected color.
+        /// Also enables color-switching buttons.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void editButton_Click(object sender, RoutedEventArgs e)
         {
             Red_Button.IsEnabled = !Red_Button.IsEnabled;
@@ -216,6 +236,11 @@ namespace TilePuzzleSolver
             selectedColor = 6;
         }
 
+        /// <summary>
+        /// Fires whenever the text is changed in the row/column text boxes. Must check and make sure the input is valid before doing anything to the puzzle/size
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void sizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             int rows, cols;
@@ -224,7 +249,7 @@ namespace TilePuzzleSolver
             //Also, the puzzle uniformgrid is initialized after the two textboxes, so it tries to run resizeTileGrid on the uninitialized uniformgrid unless we make sure it's not null
             {
                 if(Row_TextBox.Text == "" || Column_TextBox.Text == "") { /*Do nothing, wait for input*/ }
-                else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols))
+                else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
                 {
                     resizeTileGrid(rows, cols);
                     puzzleRows = rows;
@@ -239,6 +264,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void solveButton_Click(object sender, RoutedEventArgs e)
         {
             //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
@@ -247,6 +277,11 @@ namespace TilePuzzleSolver
             //Go through the path and draw/highlight it on the screen.
         }
 
+        /// <summary>
+        /// Runs the buildGraph methods to find the edges for all nodes, and then graphically displays them for the user using rectangles in between each tile button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void graphButton_Click(object sender, RoutedEventArgs e)
         {
             tilePuzzle.buildGraph();
@@ -298,6 +333,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Brings up an open file window for the user to load a text file representing a puzzle, then attempts to build a puzzle from the file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog loadFileWindow = new OpenFileDialog();
@@ -332,6 +372,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Brings up a save file window that allows the user to name a text file that will store the current puzzle in a format readable by this program's load feature.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileWindow = new SaveFileDialog();

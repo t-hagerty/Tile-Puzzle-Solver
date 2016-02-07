@@ -6,6 +6,31 @@ using System.Threading.Tasks;
 
 namespace TilePuzzleSolver
 {
+    /// <summary>
+    /// Models/handles the manipulating of a specific instance of the color tile puzzle.
+    /// 
+    /// RULES:
+    /// Can move up, down, left, or right, not diagonally. Objective is to start at the left side entering on any leftmost tile you want
+    /// and crossing the puzzle to the right side, exiting on any rightmost tile.
+    /// 
+    /// RED TILES (Represented as number 0): Impassable tiles, cannot walk onto them, can be thought of as walls
+    /// ORANGE TILES (Represented as number 1): Passable, normal movement rules, but gives the player an "orange scent" if walked on
+    /// YELLOW TILES (Represented as number 2): Not passable. In play, walking onto one will "shock" the player (electric tile) back to the tile they came from.
+    /// GREEN TILES (Represented as number 3): Passable, normal movement rules. In gameplay, would "summon a monster to fight" but is irrelevant here, besides
+    /// the interesting option to find a solution which avoids green tiles as much as possible.
+    /// BLUE TILES (Represented as number 4): Passable "water" tile, unless next to a yellow/electric tile, which makes the blue tile act as a yellow tile, or if
+    /// the player is orange scented.
+    /// PURPLE TILES (Represented as number 5): Slides the player one tile forward in the direction they entered the purple tile from if possible, gives lemon scent
+    /// "Soap" tile
+    /// PINK TILES (Represented as number 6): Passable, normal movement rules, no extra rules/behavior.
+    /// 
+    /// SCENTS:
+    /// Player starts off with no scent.
+    /// ORANGE SCENT: Given by walking onto an orange tile. When orange scented, cannot enter water tiles, acts similarly to yellow/electric tiles
+    /// "Piranhas in the water" attracted to orange scent.
+    /// LEMON SCENT: Given by walking onto/sliding across purple/"soap" tiles. Removes orange scent. Repels piranhas in water and allows normal
+    /// movement through non-electrified water tiles again.
+    /// </summary>
     class TilePuzzleModel
     {
         public Node[,] nodes;
@@ -24,7 +49,13 @@ namespace TilePuzzleSolver
         public int rows;
         public int cols;
 
-
+        /// <summary>
+        /// Constructor for a color tile puzzle with input for both number of rows and colors, and specifying the colors of each tile from
+        /// the beginning using an input 2D Array of ints.
+        /// </summary>
+        /// <param name="r">The number of rows in the puzzle/grid</param>
+        /// <param name="c">The number of columns in the puzzle/grid</param>
+        /// <param name="tileGridColors">A 2D array of integers from 0 to 6 representing each tile's color (0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - blue, 5 - purple, 6 - pink)</param>
         public TilePuzzleModel(int r, int c, int[,] tileGridColors)
         {
             rows = r;
@@ -44,6 +75,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Resizes the puzzle based on new input number of rows and columns. Copies tile colors to their same positions if possible, fills in expanded space with pink tiles.
+        /// </summary>
+        /// <param name="newRows">The new numbe of rows of the puzzle/grid</param>
+        /// <param name="newCols">The new number of columns of the puzzle/grid</param>
         public void resizePuzzle(int newRows, int newCols)
         {
             Node[,] newSizePuzzle = new Node[newRows, newCols];
@@ -87,6 +123,9 @@ namespace TilePuzzleSolver
             cols = newCols;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void solve()
         {
             bool isPlayerOrangeScented = false;
@@ -100,6 +139,12 @@ namespace TilePuzzleSolver
             //return something to represent path, maybe ordered list of tuples? that the mainwindow.xaml.cs can use to draw/highlight the path to the user.
         }
 
+        /// <summary>
+        /// Translates the 2D array of color tiles/nodes which initially have no information about what nodes they connect to into a graph of nodes and edges
+        /// based on the rules of the puzzle. For use in more easily implementing the path-finding algorithm.
+        /// 
+        /// Also connects the start node to all the leftmost nodes and the end node to all the rightmost nodes.
+        /// </summary>
         public void buildGraph()
         {
             //Set edges from the startNode ("invisible platform" on the left that can reach all tiles with col = 0) to each tile on left side
@@ -112,11 +157,6 @@ namespace TilePuzzleSolver
             {
                 for(int c = 0; c < cols; c++)
                 {
-                    //if((r == 1 || r == 2) && c == 24)
-                    //{
-                    //    r = r;
-                    //}
-
                     /*
                     Note: findEdgesForNode will normally only check Nodes to the right and below the current node rather than in all 4 directions 
                     (doing so would perform duplicate checks)
@@ -135,6 +175,10 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Clears all edges of each node in the puzzle so that none have any relations to each other any more. Should be done whenever we know
+        /// the puzzle has been editted.
+        /// </summary>
         public void resetGraphEdges()
         {
             for(int r = 0; r < rows; r++)
@@ -149,6 +193,15 @@ namespace TilePuzzleSolver
             endNode.resetNodeRelations();
         }
 
+        /// <summary>
+        /// Looks at a specific node along with its position in the puzzle and takes action for finding the edges of the node based on its color
+        /// (e.g. if the node being checked is red, nothing will be done because it can't have edges). Will normally check for downwards and
+        /// rightwards edges only so we can do half the work (most of the time, an edge going from nodeBeingChecked to another node will 
+        /// correspond to an edge going from that other node to the node being checked (except in special situations that are checked for).
+        /// </summary>
+        /// <param name="nodeBeingChecked">The current node being looked at to find edges</param>
+        /// <param name="row">The row of the node being checked</param>
+        /// <param name="col">The column of the node being checked</param>
         public void findEdgesForNode(Node nodeBeingChecked, int row, int col)
         {
             switch (nodeBeingChecked.color)
@@ -290,6 +343,15 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Checks to see if there's an edge between the node being checked and the node in the direction specified by dx and dy.
+        /// Note that dx and dy should only be -1, 0, or 1.
+        /// </summary>
+        /// <param name="nodeBeingChecked">The node being checked for a possible edge in the specified direction</param>
+        /// <param name="row">The row of nodeBeingChecked</param>
+        /// <param name="col">The column of nodeBeingChecked</param>
+        /// <param name="dx">The change in left/right position (change in column). Should only be -1, 0, or 1</param>
+        /// <param name="dy">The change in up/down position (change in row). Should only be -1, 0, or 1</param>
         public void checkForEdgeInDirection(Node nodeBeingChecked, int row, int col, int dx, int dy)
         {
             //If direction takes us out of bounds, stop here.
@@ -303,22 +365,28 @@ namespace TilePuzzleSolver
                     //Can't move onto red tile, no edges to make.
                     break;
                 case 1:
-                    //
-                    addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
+                    //Orange tiles have normal movement rules. addEdge method will add appropriate scent info to the edge.
+                    addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false); //Add edge TO this orange tile.
                     if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
+                    //no edge should be made to go back to nodeBeingChecked.
                     {
                         break;
                     }
                     else
                     {
+                        //nodeBeingChecked has no sliding involved, so we can make an edge going back from adjacentNode to it.
                         addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
                     }
                     break;
                 case 2:
+                    //Yellow/electric tile, no edge can go to this tile, do nothing.
                     break;
                 case 3:
+                    //Green tile, normal movement rules
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
                     if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
                         break;
                     }
@@ -336,6 +404,7 @@ namespace TilePuzzleSolver
                     {
                         addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
                         if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
                             break;
                         }
@@ -346,10 +415,13 @@ namespace TilePuzzleSolver
                         break;
                     }
                 case 5:
-                    int slideDX = dx + dx; //col + slideDX will always be the column of the row after the purple tile currently being looked at.
-                    int slideDY = dy + dy;
+                    int slideDX = dx + dx; //col + slideDX will always be the column of the tile after the purple tile currently being looked at.
+                    int slideDY = dy + dy; //row + slideDY will always be the row of the tile after the purple tile currently being looked at.
 
+                    //We want to find the end of the purple tile "slide" (multiple purple tiles next to each other in a line) the first tile after the 
+                    //purple tile(s) that isn't purple (where the player would stop) or the tile's bounds.
                     while (row + slideDY >= 0 && row + slideDY < rows && col + slideDX >= 0 && col + slideDX < cols && adjacentNode.color == 5)
+                    //While not out of bounds and next tile is also purple
                     {
                         adjacentNode = nodes[row + slideDY, col + slideDX];
                         slideDX += dx;
@@ -358,31 +430,41 @@ namespace TilePuzzleSolver
 
                     if(adjacentNode.color == 0)
                     {
-                        nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode; //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops
+                        //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops (slide into tile against the wall)
+                        nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode;
                     }
 
                     if(nodeBeingChecked.color != 1 && (adjacentNode.color == 2 || (adjacentNode.color == 4 && isWaterElectrified(row + slideDY - dy, col + slideDX - dx))))
                     {
+                        //If nodeBeingChecked isn't orange and adjacentNode is yellow or electrified blue
+                        //(If the purple slide ends in electricity, we make a dummy node (see explanation in case 2 of findEdgesForNode)
+                        //unless the starting tile was orange, because then the move is pointless (dummy node move only useful to get
+                        //rid of orange scent))
                         Node dummyNode = new Node(6);
                         addEdge(row, col, -2, -2, nodeBeingChecked, dummyNode, true);
                         addEdge(-2, -2, row, col, dummyNode, nodeBeingChecked, true);
                     }
                     else
                     {
-                        addEdge(row, col, row + slideDY - dy, col + slideDX - dx, nodeBeingChecked, adjacentNode, true);
+                        addEdge(row, col, row + slideDY - dy, col + slideDX - dx, nodeBeingChecked, adjacentNode, true); //from nodeBeingChecked to adjacentNode at the end of purple slide
+                        //Need to check if nodeBeingChecked is purple or not (some situations where the player could end up on purple)
                         if (nodeBeingChecked.color != 5)
                         {
                             addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                         else if(nodes[row - dy, col - dx].color == 0 || (row - dy < 0 || row - dy >= rows || col - dx < 0 || col - dx >= cols))
+                            //If node next to nodeBeingChecked in opposite direction is red or is a tile bound
+                            //(because nodeBeingChecked is purple, need to see if we can go back to it from adjacentNode.
                         {
                             addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                     }
                     break;
                 case 6:
+                    //Pink tile, normal movement rules
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
                     if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
                         break;
                     }
@@ -396,8 +478,19 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Adds a directional edge in between two nodes. Handles applying scents to an edge when appropriate.
+        /// </summary>
+        /// <param name="rowFrom">The row of the node that the edge starts from</param>
+        /// <param name="colFrom">The olumn of the node that the edge starts from</param>
+        /// <param name="rowTo">The row of the node that the edge goes to</param>
+        /// <param name="colTo">The column of the node that the edge goes to</param>
+        /// <param name="edgeGoesFrom">The node that the edge starts from</param>
+        /// <param name="edgeGoesTo">The node that the edge goes to</param>
+        /// <param name="goesOverPurple">True if in the checking for edges process, we've gone over a purple tile. False otherwise.</param>
         public void addEdge(int rowFrom, int colFrom, int rowTo, int colTo, Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
         {
+            //Extra catch in edge-making in case of bugs: make sure neither node involved is an inaccessible tile
             if(edgeGoesFrom.color == 0 || edgeGoesFrom.color == 2 || (edgeGoesFrom.color == 4 && isWaterElectrified(rowFrom, colFrom)) ||
                 edgeGoesTo.color == 0 || edgeGoesTo.color == 2 || (edgeGoesTo.color == 4 && isWaterElectrified(rowTo, colTo)))
             {
@@ -406,18 +499,27 @@ namespace TilePuzzleSolver
 
             if(edgeGoesTo.color == 1)
             {
+                //Edge goes to an orange tile, so it will give the orange scent
                 edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, "orange"));
             }
             else if(goesOverPurple)
             {
+                //Doesn't go to an orange tile and goes over purple, gives lemon scent
                 edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, "lemon"));
             }
             else
             {
+                //Normal unscented edge.
                 edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, ""));
             }
         }
 
+        /// <summary>
+        /// Checks if a blue/water tile is adjacent to a yellow/electric tile (directly above, below, left or right, not diagonal) and thus will act like a yellow tile.
+        /// </summary>
+        /// <param name="waterRow">Row of the water tile being checked</param>
+        /// <param name="waterCol">Column of the water tile being checked</param>
+        /// <returns>True if the blue tile is next to a yellow tile, false otherwise</returns>
         public bool isWaterElectrified(int waterRow, int waterCol)
         {
             if ((waterRow - 1 >= 0 && nodes[waterRow - 1, waterCol].color == 2) || (waterRow + 1 < rows && nodes[waterRow + 1, waterCol].color == 2) || 
