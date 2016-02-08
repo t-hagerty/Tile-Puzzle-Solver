@@ -69,7 +69,21 @@ namespace TilePuzzleSolver
 
             foreach(Edge anEdge in edges)
             {
-                edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+                if(anEdge.childRow == -2 && anEdge.childCol == -2)
+                {
+                    if (anEdge.childNode.edges.Count > 0)
+                    {
+                        edgeList = edgeList + "Edge to dummy node which leads to " + anEdge.childNode.edges[0].childRow + ", " + anEdge.childNode.edges[0].childCol + " with color " + anEdge.childNode.edges[0].childNode.color + "\n";
+                    }
+                    else
+                    {
+                        edgeList = edgeList + "Edge to dummy node which has nowhere valid/useful to go back to \n";
+                    }
+                }
+                else
+                {
+                    edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+                }
             }
 
             return edgeList;

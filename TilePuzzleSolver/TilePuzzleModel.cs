@@ -84,37 +84,33 @@ namespace TilePuzzleSolver
         {
             Node[,] newSizePuzzle = new Node[newRows, newCols];
 
-            if (newRows > rows || newCols > cols)
+            if(newRows < rows)
             {
-                for (int r = 0; r < rows; r++)
+                rows = newRows;
+            }
+            if(newCols < cols)
+            {
+                cols = newCols;
+            }
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
                 {
-                    for (int c = 0; c < cols; c++)
-                    {
-                        newSizePuzzle[r, c] = nodes[r, c];
-                    }
-                    for (int c = cols; c < newCols; c++)
-                    {
-                        //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
-                        newSizePuzzle[r, c] = new Node(6);
-                    }
+                    newSizePuzzle[r, c] = nodes[r, c];
                 }
-                for (int r = rows; r < newRows; r++)
+                for (int c = cols; c < newCols; c++)
                 {
-                    for (int c = 0; c < newCols; c++)
-                    {
-                        //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
-                        newSizePuzzle[r, c] = new Node(6);
-                    }
+                    //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
+                    newSizePuzzle[r, c] = new Node(6);
                 }
             }
-            else
+            for (int r = rows; r < newRows; r++)
             {
-                for(int r = 0; r < newRows; r++)
+                for (int c = 0; c < newCols; c++)
                 {
-                    for(int c = 0; c < newCols; c++)
-                    {
-                        newSizePuzzle[r, c] = nodes[r, c];
-                    }
+                    //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
+                    newSizePuzzle[r, c] = new Node(6);
                 }
             }
 
@@ -242,7 +238,7 @@ namespace TilePuzzleSolver
                             i++;
                         }
                         if (i == cols) { i--; } //If we've reached puzzle bound, purple tile is against a side, that will be where the player slides from (if at all)
-                        checkForEdgeInDirection(nodes[row, i], row, i, 0, -1);
+                        checkForEdgeInDirection(nodes[row, i], row, i, -1, 0);
                     }
 
                     //Need to check if a dummy node needs to be made for an upward direction because we normally only check downwards 
@@ -257,7 +253,7 @@ namespace TilePuzzleSolver
                             i++;
                         }
                         if (i == rows) { i--; } //If we've reached puzzle bound, purple tile is against a side, that will be where the player slides from (if at all)
-                        checkForEdgeInDirection(nodes[i, col], i, col, -1, 0);
+                        checkForEdgeInDirection(nodes[i, col], i, col, 0, -1);
                     }
                     break;
                 case 3:
@@ -280,7 +276,7 @@ namespace TilePuzzleSolver
                                 i++;
                             }
                             if (i == cols) { i--; }
-                            checkForEdgeInDirection(nodes[row, i], row, i, 0, -1);
+                            checkForEdgeInDirection(nodes[row, i], row, i, -1, 0);
                         }
                         if (row + 1 < rows && nodes[row + 1, col].color == 5)
                         {
@@ -290,7 +286,7 @@ namespace TilePuzzleSolver
                                 i++;
                             }
                             if (i == rows) { i--; }
-                            checkForEdgeInDirection(nodes[i, col], i, col, -1, 0);
+                            checkForEdgeInDirection(nodes[i, col], i, col, 0, -1);
                         }
                     }
                     else //Not electrified, normal movement rules
@@ -442,7 +438,38 @@ namespace TilePuzzleSolver
                         //rid of orange scent))
                         Node dummyNode = new Node(6);
                         addEdge(row, col, -2, -2, nodeBeingChecked, dummyNode, true);
-                        addEdge(-2, -2, row, col, dummyNode, nodeBeingChecked, true);
+                        if(nodeBeingChecked.color == 5)
+                            //If the node we started from in sliding into a yellow tile was purple, we might not be sent back to that node, check to see where we slide back to.
+                        {
+                            slideDX = dx * -1;
+                            slideDY = dy * -1;
+
+                            while(row + slideDY >= 0 && row + slideDY < rows && col + slideDX >= 0 && col + slideDX < cols && nodes[row + slideDY, col + slideDX].color == 5)
+                            {
+                                slideDX -= dx;
+                                slideDY -= dy;
+                            }
+
+                            if (nodes[row + slideDY, col + slideDX].color == 1 || nodes[row + slideDY, col + slideDX].color == 2 || (nodes[row + slideDY, col + slideDX].color == 4 && isWaterElectrified(row + slideDY, col + slideDX)))
+                            {
+                                //No use in finishing the dummy node if it would slide back to another elctrified tile or an orange one.
+                                //If this happens, we're left with an edge from nodeBeingChecked to a dummy node that has no edges. If the path-finding
+                                ///algorithm even checks this dummy node, it will be seen as a dead end, so it's not much of a problem.
+                                break;
+                            }
+                            if (nodes[row + slideDY, col + slideDX].color == 0)
+                            {
+                                //If sliding into a wall, backtrack to tile before the wall.
+                                slideDX += dx;
+                                slideDY += dy;
+                            }
+
+                            addEdge(-2, -2, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
+                        }
+                        else
+                        {
+                            addEdge(-2, -2, row, col, dummyNode, nodeBeingChecked, true);
+                        }
                     }
                     else
                     {
@@ -452,7 +479,7 @@ namespace TilePuzzleSolver
                         {
                             addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
-                        else if(nodes[row - dy, col - dx].color == 0 || (row - dy < 0 || row - dy >= rows || col - dx < 0 || col - dx >= cols))
+                        else if((row - dy < 0 || row - dy >= rows || col - dx < 0 || col - dx >= cols) || nodes[row - dy, col - dx].color == 0)
                             //If node next to nodeBeingChecked in opposite direction is red or is a tile bound
                             //(because nodeBeingChecked is purple, need to see if we can go back to it from adjacentNode.
                         {

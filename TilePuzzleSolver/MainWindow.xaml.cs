@@ -352,6 +352,8 @@ namespace TilePuzzleSolver
                         int loadedPuzzleCols = int.Parse(reader.ReadLine());
 
                         tilePuzzle.resizePuzzle(loadedPuzzleRows, loadedPuzzleCols);
+                        puzzleRows = loadedPuzzleRows;
+                        puzzleColumns = loadedPuzzleCols;
 
                         for (int r = 0; r < loadedPuzzleRows; r++)
                         {
