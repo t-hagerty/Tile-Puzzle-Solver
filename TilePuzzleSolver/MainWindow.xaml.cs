@@ -199,6 +199,8 @@ namespace TilePuzzleSolver
             Purple_Button.IsEnabled = !Purple_Button.IsEnabled;
             Pink_Button.IsEnabled = !Pink_Button.IsEnabled;
             isEditMode = !isEditMode;
+
+            removeGraph();
         }
 
         private void redButton_Click(object sender, RoutedEventArgs e)
@@ -271,6 +273,12 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void solveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (isEditMode)
+            {
+                editButton_Click(sender, e);
+            }
+            removeGraph();
+
             //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
             tilePuzzle.solve();
 
@@ -284,6 +292,12 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void graphButton_Click(object sender, RoutedEventArgs e)
         {
+            if(isEditMode)
+            {
+                editButton_Click(sender, e);
+            }
+            removeGraph();
+
             tilePuzzle.buildGraph();
 
             Canvas graph = new Canvas();
@@ -340,6 +354,8 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
+            removeGraph();
+
             OpenFileDialog loadFileWindow = new OpenFileDialog();
             loadFileWindow.Filter = "Text files (*.txt)|*.txt";
             if(loadFileWindow.ShowDialog() == true)
@@ -397,6 +413,20 @@ namespace TilePuzzleSolver
 
                 File.WriteAllText(saveFileWindow.FileName, fileText);
             }
+        }
+
+        /// <summary>
+        /// Clears the displayed edges by removing the canvas that contains the rectangles that represents them, and resets all relations every tile has to each other.
+        /// </summary>
+        private void removeGraph()
+        {
+            //Removes the canvas (which we don't have a reference to) that displays all edges between tiles/nodes (if it's even been made).
+            if (TilePuzzleContainer_Grid.Children.Count > 1)
+            {
+                TilePuzzleContainer_Grid.Children.RemoveAt(1);
+            }
+
+            tilePuzzle.resetGraphEdges();
         }
     }
 
