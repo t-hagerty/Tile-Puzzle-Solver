@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,11 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace TilePuzzleSolver
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// Tile Puzzle ViewModel (MainWindow.xaml is the View, TilePuzzleModel is the Model)
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -27,6 +31,9 @@ namespace TilePuzzleSolver
         Button[,] tilePuzzleGrid;
         TilePuzzleModel tilePuzzle;
 
+        /// <summary>
+        /// Constructor for the View/ViewModel of the tile puzzle editor/solver
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -41,6 +48,11 @@ namespace TilePuzzleSolver
             resizeTileGrid(4, 39);   
         }
 
+        /// <summary>
+        /// Resizes the puzzle based on input rows and columns, and rebuilds/replaces the visuals/buttons representing the puzzle in the View.
+        /// </summary>
+        /// <param name="newRows">The new amount of rows of the puzzle</param>
+        /// <param name="newCols">The new amount of columns o the puzzle</param>
         public void resizeTileGrid(int newRows, int newCols)
         {
             TilePuzzle_UniformGrid.Children.Clear();
@@ -115,14 +127,21 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Changes the color of a tile to the selected color if in edit mode.
+        /// 
+        /// If not in edit mode, doubles as a function to pop up info about the edges a node has (for testing purposes)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void editTile_Click(object sender, RoutedEventArgs e)
         {
+            int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
+            int row = index / (puzzleColumns + 2);
+            int col = (index % (puzzleColumns + 2)) - 1;
+
             if (isEditMode)
             {
-                int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
-                int row = index / (puzzleColumns + 2);
-                int col = (index % (puzzleColumns + 2)) - 1;
-
                 switch (selectedColor)
                 {
                     case 0:
@@ -158,8 +177,18 @@ namespace TilePuzzleSolver
                         break;
                 }
             }
+            else
+            {
+                MessageBox.Show(tilePuzzle.nodes[row, col].edgesToString());
+            }
         }
 
+        /// <summary>
+        /// Toggles whether or not the user is in edit mode, that is, if they click on a tile in the puzzle, if it will change to their selected color.
+        /// Also enables color-switching buttons.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void editButton_Click(object sender, RoutedEventArgs e)
         {
             Red_Button.IsEnabled = !Red_Button.IsEnabled;
@@ -170,6 +199,8 @@ namespace TilePuzzleSolver
             Purple_Button.IsEnabled = !Purple_Button.IsEnabled;
             Pink_Button.IsEnabled = !Pink_Button.IsEnabled;
             isEditMode = !isEditMode;
+
+            removeGraph();
         }
 
         private void redButton_Click(object sender, RoutedEventArgs e)
@@ -207,6 +238,11 @@ namespace TilePuzzleSolver
             selectedColor = 6;
         }
 
+        /// <summary>
+        /// Fires whenever the text is changed in the row/column text boxes. Must check and make sure the input is valid before doing anything to the puzzle/size
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void sizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             int rows, cols;
@@ -215,7 +251,7 @@ namespace TilePuzzleSolver
             //Also, the puzzle uniformgrid is initialized after the two textboxes, so it tries to run resizeTileGrid on the uninitialized uniformgrid unless we make sure it's not null
             {
                 if(Row_TextBox.Text == "" || Column_TextBox.Text == "") { /*Do nothing, wait for input*/ }
-                else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols))
+                else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
                 {
                     resizeTileGrid(rows, cols);
                     puzzleRows = rows;
@@ -230,16 +266,38 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void solveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (isEditMode)
+            {
+                editButton_Click(sender, e);
+            }
+            removeGraph();
+
             //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
             tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
         }
 
+        /// <summary>
+        /// Runs the buildGraph methods to find the edges for all nodes, and then graphically displays them for the user using rectangles in between each tile button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void graphButton_Click(object sender, RoutedEventArgs e)
         {
+            if(isEditMode)
+            {
+                editButton_Click(sender, e);
+            }
+            removeGraph();
+
             tilePuzzle.buildGraph();
 
             Canvas graph = new Canvas();
@@ -258,7 +316,7 @@ namespace TilePuzzleSolver
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
-                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -1 && anEdge.parentRow != -1))
+                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -2 && anEdge.parentRow != -2))
                         {
                             //vertical edge
                             edge.Width = 3;
@@ -271,7 +329,7 @@ namespace TilePuzzleSolver
                             Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
                             i = i + 5;
                         }
-                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -1 && anEdge.parentCol != -1))
+                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -2 && anEdge.parentCol != -2))
                         {
                             //horizontal edge
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
@@ -287,6 +345,88 @@ namespace TilePuzzleSolver
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Brings up an open file window for the user to load a text file representing a puzzle, then attempts to build a puzzle from the file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            removeGraph();
+
+            OpenFileDialog loadFileWindow = new OpenFileDialog();
+            loadFileWindow.Filter = "Text files (*.txt)|*.txt";
+            if(loadFileWindow.ShowDialog() == true)
+            {
+                using (TextReader reader = File.OpenText(loadFileWindow.FileName))
+                {
+                    try
+                    {
+                        int loadedPuzzleRows = int.Parse(reader.ReadLine());
+                        int loadedPuzzleCols = int.Parse(reader.ReadLine());
+
+                        tilePuzzle.resizePuzzle(loadedPuzzleRows, loadedPuzzleCols);
+                        puzzleRows = loadedPuzzleRows;
+                        puzzleColumns = loadedPuzzleCols;
+
+                        for (int r = 0; r < loadedPuzzleRows; r++)
+                        {
+                            for (int c = 0; c < loadedPuzzleCols; c++)
+                            {
+                                tilePuzzle.nodes[r, c] = new Node(int.Parse(reader.ReadLine()));
+                            }
+                        }
+
+                        Row_TextBox.Text = loadedPuzzleRows + "";
+                        Column_TextBox.Text = loadedPuzzleCols + "";
+                    }
+                    catch(FormatException fe)
+                    {
+                        MessageBox.Show("Invalid File!");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Brings up a save file window that allows the user to name a text file that will store the current puzzle in a format readable by this program's load feature.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileWindow = new SaveFileDialog();
+            saveFileWindow.Filter = "Text files (*.txt)|*.txt";
+            if(saveFileWindow.ShowDialog() == true)
+            {
+                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+
+                for(int r = 0; r < tilePuzzle.rows; r++)
+                {
+                    for(int c = 0; c < tilePuzzle.cols; c++)
+                    {
+                        fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
+                    }
+                }
+
+                File.WriteAllText(saveFileWindow.FileName, fileText);
+            }
+        }
+
+        /// <summary>
+        /// Clears the displayed edges by removing the canvas that contains the rectangles that represents them, and resets all relations every tile has to each other.
+        /// </summary>
+        private void removeGraph()
+        {
+            //Removes the canvas (which we don't have a reference to) that displays all edges between tiles/nodes (if it's even been made).
+            if (TilePuzzleContainer_Grid.Children.Count > 1)
+            {
+                TilePuzzleContainer_Grid.Children.RemoveAt(1);
+            }
+
+            tilePuzzle.resetGraphEdges();
         }
     }
 
