@@ -430,6 +430,13 @@ namespace TilePuzzleSolver
                         nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode;
                     }
 
+                    if(col + slideDX == cols && adjacentNode.color == 5)
+                    {
+                        //If while loop stopped against the right puzzle bound && the last tile before the bound was purple, it should slide into the endNode side.
+                        addEdge(row, col, row, cols, nodeBeingChecked, endNode, true);
+                        break;
+                    }
+
                     if(nodeBeingChecked.color != 1 && (adjacentNode.color == 2 || (adjacentNode.color == 4 && isWaterElectrified(row + slideDY - dy, col + slideDX - dx))))
                     {
                         //If nodeBeingChecked isn't orange and adjacentNode is yellow or electrified blue
@@ -490,10 +497,25 @@ namespace TilePuzzleSolver
                 case 6:
                     //Pink tile, normal movement rules
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        break;
+                        if(!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        {
+                            break;
+                        }
+                        else if((row == 0 || row == rows - 1) && dy == 0)
+                        {
+                            break;
+                        }
+                        else if((col == 0 || col == cols - 1) && dx == 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                        }
                     }
                     else
                     {
