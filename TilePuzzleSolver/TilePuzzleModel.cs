@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Priority_Queue;
 
 namespace TilePuzzleSolver
 {
@@ -124,15 +125,59 @@ namespace TilePuzzleSolver
         /// </summary>
         public void solve()
         {
-            bool isPlayerOrangeScented = false;
-
-            resetGraphEdges(); 
-
+            resetGraphEdges();
             buildGraph();
-            
             //A*-based pathfinding algorithm
+            bool isPlayerOrangeScented = false; //false = either no scent, or lemon scented (equivalent)
+            List<Node> closedSet = new List<Node>();
+            SimplePriorityQueue<Node> openSet = new SimplePriorityQueue<Node>();
+            List<Node> closedOrangeSet = new List<Node>();
 
+            startNode.g = 0;
+            openSet.Enqueue(startNode, 0);
+
+            while (openSet.Count > 0)
+            {
+                Node current = openSet.Dequeue();
+
+                if(current == endNode)
+                {
+                    return;
+                }
+
+                closedSet.Add(current);
+
+                foreach(Edge toNeighbor in current.edges)
+                {
+                    if(closedSet.Contains(toNeighbor.childNode))
+                    {
+                        continue;
+                    }
+
+                    int currentG = current.g + ((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+
+                    if(!openSet.Contains(toNeighbor.childNode))
+                    {
+                        toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
+                        openSet.Enqueue(toNeighbor.childNode, toNeighbor.childNode.f);
+                    }
+                    else if(currentG >= toNeighbor.childNode.g)
+                    {
+                        continue;
+                    }
+
+                    toNeighbor.childNode.g = currentG;
+                    toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
+                    openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
+                    toNeighbor.childNode.parent = current;
+                }
+            }
             //return something to represent path, maybe ordered list of tuples? that the mainwindow.xaml.cs can use to draw/highlight the path to the user.
+        }
+
+        private int heuristic(int col)
+        {
+            return cols - 1 - col;
         }
 
         /// <summary>

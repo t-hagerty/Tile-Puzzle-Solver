@@ -26,3 +26,5 @@ C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\Ti
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.Properties.Resources.resources
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csproj.GenerateResource.Cache
 C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\obj\Debug\TilePuzzleSolver.csprojResolveAssemblyReference.cache
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\Priority Queue.dll
+C:\Users\Tyler\Documents\GitHub\Tile-Puzzle-Solver\TilePuzzleSolver\bin\Debug\Priority Queue.pdb

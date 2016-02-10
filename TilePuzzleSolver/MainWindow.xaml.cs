@@ -283,6 +283,46 @@ namespace TilePuzzleSolver
             tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
+            Canvas graph = new Canvas();
+            graph.Width = TilePuzzleContainer_Grid.Width;
+            graph.Height = TilePuzzleContainer_Grid.Height;
+            TilePuzzleContainer_Grid.Children.Add(graph);
+
+            Node currentNode = tilePuzzle.endNode;
+            int currentRow = currentNode.parent.edges[0].parentRow;
+            int currentCol = tilePuzzle.cols;
+
+            while (currentNode.parent != null)
+            {
+                int nextNodeRow = currentNode.parent.edges[0].parentRow;
+                int nextNodeCol = currentNode.parent.edges[0].parentCol;
+
+                Rectangle edge = new Rectangle();
+                edge.Fill = new SolidColorBrush(Colors.Black);
+                if (currentRow != nextNodeRow && (currentRow != -2 && nextNodeRow != -2))
+                {
+                    //vertical edge
+                    edge.Width = 3;
+                    edge.Height = 26 + ((Math.Max(currentRow, nextNodeRow) - Math.Min(currentRow, nextNodeRow) - 1) * 25);
+                    graph.Children.Add(edge);
+                    Canvas.SetTop(edge, (25 * Math.Min(nextNodeRow, currentRow) + 12));
+                    Canvas.SetLeft(edge, 25 + (25 * nextNodeCol + 11));
+                }
+                else if (currentCol != nextNodeCol && (currentCol != -2 && nextNodeCol != -2))
+                {
+                    //horizontal edge
+                    edge.Width = 26 + ((Math.Max(nextNodeCol, currentCol) - Math.Min(nextNodeCol, currentCol) - 1) * 25);
+                    edge.Height = 3;
+                    graph.Children.Add(edge);
+                    Canvas.SetTop(edge, 25 * nextNodeRow + 11);
+                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(nextNodeCol, currentCol) + 12));
+                }
+
+                currentNode = currentNode.parent;
+                currentRow = nextNodeRow;
+                currentCol = nextNodeCol;
+            }
+            
         }
 
         /// <summary>
