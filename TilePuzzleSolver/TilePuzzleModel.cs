@@ -127,6 +127,7 @@ namespace TilePuzzleSolver
         {
             resetGraphEdges();
             buildGraph();
+
             //A*-based pathfinding algorithm
             bool isPlayerOrangeScented = false; //false = either no scent, or lemon scented (equivalent)
             List<Node> closedSet = new List<Node>();
@@ -154,7 +155,7 @@ namespace TilePuzzleSolver
                         continue;
                     }
 
-                    int currentG = current.g + ((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+                    int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
 
                     if(!openSet.Contains(toNeighbor.childNode))
                     {

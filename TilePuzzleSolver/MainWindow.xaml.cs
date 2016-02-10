@@ -289,8 +289,18 @@ namespace TilePuzzleSolver
             TilePuzzleContainer_Grid.Children.Add(graph);
 
             Node currentNode = tilePuzzle.endNode;
-            int currentRow = currentNode.parent.edges[0].parentRow;
-            int currentCol = tilePuzzle.cols;
+            int currentRow;
+            int currentCol;
+            if (currentNode.parent == null)
+            {
+                MessageBox.Show("No solution found!");
+                return;
+            }
+            else
+            {
+                currentRow = currentNode.parent.edges[0].parentRow;
+                currentCol = tilePuzzle.cols;
+            }
 
             while (currentNode.parent != null)
             {
