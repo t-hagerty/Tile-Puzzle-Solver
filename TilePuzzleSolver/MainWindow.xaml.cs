@@ -302,10 +302,27 @@ namespace TilePuzzleSolver
                 currentCol = tilePuzzle.cols;
             }
 
+            for(int r = 0; r < puzzleRows; r++)
+            {
+                for (int c = 0; c < puzzleColumns; c++)
+                {
+                    if (tilePuzzle.nodes[r, c].parent != null)
+                    {
+                        MessageBox.Show("Parent of tile at " + r + ", " + c + ": " + tilePuzzle.nodes[r,c].parent.edges[0].parentRow + ", " + tilePuzzle.nodes[r, c].parent.edges[0].parentCol);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Tile at " + r + ", " + c + " is an orphan");
+                    }
+                }
+            }
+
             while (currentNode.parent != null)
             {
                 int nextNodeRow = currentNode.parent.edges[0].parentRow;
                 int nextNodeCol = currentNode.parent.edges[0].parentCol;
+
+                MessageBox.Show("Path from " + currentRow + ", " + currentCol + " to " + nextNodeRow + ", " + nextNodeCol);
 
                 Rectangle edge = new Rectangle();
                 edge.Fill = new SolidColorBrush(Colors.Black);

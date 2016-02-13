@@ -133,6 +133,7 @@ namespace TilePuzzleSolver
             List<Node> closedSet = new List<Node>();
             SimplePriorityQueue<Node> openSet = new SimplePriorityQueue<Node>();
             List<Node> closedOrangeSet = new List<Node>();
+            SimplePriorityQueue<Node> openOrangeSet;
 
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
@@ -146,34 +147,96 @@ namespace TilePuzzleSolver
                     return;
                 }
 
-                closedSet.Add(current);
-
-                foreach(Edge toNeighbor in current.edges)
+                if(current.color == 1)
                 {
-                    if(closedSet.Contains(toNeighbor.childNode))
+                    isPlayerOrangeScented = true;
+                }
+
+                if(isPlayerOrangeScented)
+                {
+                    openOrangeSet = new SimplePriorityQueue<Node>();
+                    openOrangeSet.Enqueue(current, current.f);
+
+                    while(openOrangeSet.Count > 0)
                     {
-                        continue;
+                        Node currentOrange = openOrangeSet.Dequeue();
+
+                        closedOrangeSet.Add(currentOrange);
+                        foreach (Edge toOrangeNeighbor in currentOrange.edges)
+                        {
+                            if (closedSet.Contains(toOrangeNeighbor.childNode) || closedOrangeSet.Contains(toOrangeNeighbor.childNode))
+                            {
+                                continue;
+                            }
+
+                            int currentOrangeG = currentOrange.g + Math.Abs((toOrangeNeighbor.childRow - toOrangeNeighbor.parentRow) + (toOrangeNeighbor.childCol - toOrangeNeighbor.parentCol));
+
+                            if (openSet.Contains(toOrangeNeighbor.childNode) && toOrangeNeighbor.childNode.g < currentOrangeG)
+                            {
+                                continue;
+                            }
+                            if (toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented)
+                            {
+                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                                toOrangeNeighbor.childNode.g = currentOrangeG;
+                                openSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
+                                //closedOrangeSet.Add(toOrangeNeighbor.childNode);
+                                toOrangeNeighbor.childNode.parent = currentOrange;
+                                continue;
+                            }
+                            if(toOrangeNeighbor.childNode.color == 4)
+                            {
+                                continue;
+                            }
+                            if (!openOrangeSet.Contains(toOrangeNeighbor.childNode))
+                            {
+                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                                openOrangeSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
+                            }
+                            else if (currentOrangeG >= toOrangeNeighbor.childNode.g)
+                            {
+                                continue;
+                            }
+
+                            toOrangeNeighbor.childNode.g = currentOrangeG;
+                            toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                            openOrangeSet.UpdatePriority(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
+                            toOrangeNeighbor.childNode.parent = currentOrange;
+                        }
                     }
 
-                    int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
-
-                    if(!openSet.Contains(toNeighbor.childNode))
+                    isPlayerOrangeScented = false;
+                    closedSet.Add(current);
+                }
+                else
+                {
+                    closedSet.Add(current);
+                    foreach (Edge toNeighbor in current.edges)
                     {
+                        if (closedSet.Contains(toNeighbor.childNode))
+                        {
+                            continue;
+                        }
+
+                        int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+
+                        if (!openSet.Contains(toNeighbor.childNode))
+                        {
+                            toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
+                            openSet.Enqueue(toNeighbor.childNode, toNeighbor.childNode.f);
+                        }
+                        else if (currentG >= toNeighbor.childNode.g)
+                        {
+                            continue;
+                        }
+
+                        toNeighbor.childNode.g = currentG;
                         toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
-                        openSet.Enqueue(toNeighbor.childNode, toNeighbor.childNode.f);
+                        openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
+                        toNeighbor.childNode.parent = current;
                     }
-                    else if(currentG >= toNeighbor.childNode.g)
-                    {
-                        continue;
-                    }
-
-                    toNeighbor.childNode.g = currentG;
-                    toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
-                    openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
-                    toNeighbor.childNode.parent = current;
                 }
             }
-            //return something to represent path, maybe ordered list of tuples? that the mainwindow.xaml.cs can use to draw/highlight the path to the user.
         }
 
         private int heuristic(int col)
