@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Edge.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="PathTreeNode.cs" />
     <Compile Include="TilePuzzleModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

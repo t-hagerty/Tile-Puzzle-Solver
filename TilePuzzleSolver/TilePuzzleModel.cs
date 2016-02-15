@@ -123,7 +123,7 @@ namespace TilePuzzleSolver
         /// <summary>
         /// 
         /// </summary>
-        public void solve()
+        public List<PathTreeNode> solve()
         {
             resetGraphEdges();
             buildGraph();
@@ -134,18 +134,37 @@ namespace TilePuzzleSolver
             SimplePriorityQueue<Node> openSet = new SimplePriorityQueue<Node>();
             List<Node> closedOrangeSet = new List<Node>();
             SimplePriorityQueue<Node> openOrangeSet;
+            List<PathTreeNode> Leaves = new List<PathTreeNode>();
 
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
+            PathTreeNode root = new PathTreeNode(rows / 2, -1);
+            Leaves.Add(root);
+            
 
             while (openSet.Count > 0)
             {
                 Node current = openSet.Dequeue();
+                PathTreeNode currentStep = null;
 
-                if(current == endNode)
+                Predicate<PathTreeNode> matchingCurrentPos = aStep => aStep.row == currentStep.row && aStep.col == currentStep.col;
+
+                if (current == endNode)
                 {
-                    return;
+                    return Leaves;
                 }
+
+                foreach (PathTreeNode leaf in Leaves)
+                {
+                    if(leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
+                    {
+                        if(currentStep == null || currentStep.height > leaf.height)
+                        {
+                            currentStep = leaf;
+                        }
+                    }
+                }
+                Leaves.RemoveAll(matchingCurrentPos);
 
                 if(current.color == 1)
                 {
@@ -156,10 +175,25 @@ namespace TilePuzzleSolver
                 {
                     openOrangeSet = new SimplePriorityQueue<Node>();
                     openOrangeSet.Enqueue(current, current.f);
+                    Leaves.Add(currentStep);
 
                     while(openOrangeSet.Count > 0)
                     {
                         Node currentOrange = openOrangeSet.Dequeue();
+                        PathTreeNode currentOrangeStep = null;
+                        Predicate<PathTreeNode> matchingCurrentOrangePos = aStep => aStep.row == currentOrangeStep.row && aStep.col == currentOrangeStep.col;
+
+                        foreach (PathTreeNode leaf in Leaves)
+                        {
+                            if (leaf.row == currentOrange.edges[0].parentRow && leaf.col == currentOrange.edges[0].parentCol)
+                            {
+                                if (currentOrangeStep == null || currentOrangeStep.height > leaf.height)
+                                {
+                                    currentOrangeStep = leaf;
+                                }
+                            }
+                        }
+                        Leaves.RemoveAll(matchingCurrentOrangePos);
 
                         closedOrangeSet.Add(currentOrange);
                         foreach (Edge toOrangeNeighbor in currentOrange.edges)
@@ -175,13 +209,16 @@ namespace TilePuzzleSolver
                             {
                                 continue;
                             }
-                            if (toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented)
+
+                            PathTreeNode aNextStep;
+
+                            if ((toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented) || toOrangeNeighbor.childNode == endNode)
                             {
                                 toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
                                 toOrangeNeighbor.childNode.g = currentOrangeG;
                                 openSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                                //closedOrangeSet.Add(toOrangeNeighbor.childNode);
-                                toOrangeNeighbor.childNode.parent = currentOrange;
+                                aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep);
+                                Leaves.Add(aNextStep);
                                 continue;
                             }
                             if(toOrangeNeighbor.childNode.color == 4)
@@ -201,7 +238,8 @@ namespace TilePuzzleSolver
                             toOrangeNeighbor.childNode.g = currentOrangeG;
                             toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
                             openOrangeSet.UpdatePriority(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                            toOrangeNeighbor.childNode.parent = currentOrange;
+                            aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep);
+                            Leaves.Add(aNextStep);
                         }
                     }
 
@@ -219,6 +257,7 @@ namespace TilePuzzleSolver
                         }
 
                         int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+                        PathTreeNode aNextStep;
 
                         if (!openSet.Contains(toNeighbor.childNode))
                         {
@@ -233,10 +272,13 @@ namespace TilePuzzleSolver
                         toNeighbor.childNode.g = currentG;
                         toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
                         openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
-                        toNeighbor.childNode.parent = current;
+                        aNextStep = new PathTreeNode(toNeighbor.childRow, toNeighbor.childCol, currentStep);
+                        Leaves.Add(aNextStep);
                     }
                 }
             }
+
+            return Leaves;
         }
 
         private int heuristic(int col)

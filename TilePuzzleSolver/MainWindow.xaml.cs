@@ -45,7 +45,15 @@ namespace TilePuzzleSolver
             tilePuzzle = new TilePuzzleModel(puzzleRows, puzzleColumns, startPuzzle);
             tilePuzzleGrid = new Button[4, 39];
 
-            resizeTileGrid(4, 39);   
+            resizeTileGrid(4, 39);
+
+            //PathTreeNode root = new PathTreeNode(0, -1);
+            //PathTreeNode p1 = new PathTreeNode(0, 0, root);
+            //PathTreeNode p2 = new PathTreeNode(0, 1, p1);
+            //PathTreeNode p3 = new PathTreeNode(0, 3, p2);
+            //PathTreeNode p4 = new PathTreeNode(0, 1, p3);
+            //PathTreeNode p5 = new PathTreeNode(0, 4, p3);
+            //PathTreeNode p6 = new PathTreeNode(0, 5, p5);
         }
 
         /// <summary>
@@ -280,7 +288,7 @@ namespace TilePuzzleSolver
             removeGraph();
 
             //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
-            tilePuzzle.solve();
+            List<PathTreeNode> deadEnds = tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
             Canvas graph = new Canvas();
@@ -288,66 +296,51 @@ namespace TilePuzzleSolver
             graph.Height = TilePuzzleContainer_Grid.Height;
             TilePuzzleContainer_Grid.Children.Add(graph);
 
-            Node currentNode = tilePuzzle.endNode;
-            int currentRow;
-            int currentCol;
-            if (currentNode.parent == null)
+            PathTreeNode currentStep = null;
+
+            foreach(PathTreeNode deadEnd in deadEnds)
+            {
+                if(deadEnd.col == puzzleColumns)
+                {
+                    if(currentStep == null || currentStep.height > deadEnd.height)
+                    {
+                        currentStep = deadEnd;
+                    }
+                }
+            }
+
+            if(currentStep == null)
             {
                 MessageBox.Show("No solution found!");
                 return;
             }
-            else
+
+            while (currentStep.parent != null)
             {
-                currentRow = currentNode.parent.edges[0].parentRow;
-                currentCol = tilePuzzle.cols;
-            }
-
-            for(int r = 0; r < puzzleRows; r++)
-            {
-                for (int c = 0; c < puzzleColumns; c++)
-                {
-                    if (tilePuzzle.nodes[r, c].parent != null)
-                    {
-                        MessageBox.Show("Parent of tile at " + r + ", " + c + ": " + tilePuzzle.nodes[r,c].parent.edges[0].parentRow + ", " + tilePuzzle.nodes[r, c].parent.edges[0].parentCol);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Tile at " + r + ", " + c + " is an orphan");
-                    }
-                }
-            }
-
-            while (currentNode.parent != null)
-            {
-                int nextNodeRow = currentNode.parent.edges[0].parentRow;
-                int nextNodeCol = currentNode.parent.edges[0].parentCol;
-
-                MessageBox.Show("Path from " + currentRow + ", " + currentCol + " to " + nextNodeRow + ", " + nextNodeCol);
-
                 Rectangle edge = new Rectangle();
                 edge.Fill = new SolidColorBrush(Colors.Black);
-                if (currentRow != nextNodeRow && (currentRow != -2 && nextNodeRow != -2))
+                if (currentStep.row != currentStep.parent.row && (currentStep.row != -2 && currentStep.parent.row != -2))
                 {
                     //vertical edge
                     edge.Width = 3;
-                    edge.Height = 26 + ((Math.Max(currentRow, nextNodeRow) - Math.Min(currentRow, nextNodeRow) - 1) * 25);
+                    edge.Height = 26 + ((Math.Max(currentStep.row, currentStep.parent.row) - Math.Min(currentStep.row, currentStep.parent.row) - 1) * 25);
                     graph.Children.Add(edge);
-                    Canvas.SetTop(edge, (25 * Math.Min(nextNodeRow, currentRow) + 12));
-                    Canvas.SetLeft(edge, 25 + (25 * nextNodeCol + 11));
+                    Canvas.SetTop(edge, (25 * Math.Min(currentStep.parent.row, currentStep.row) + 12));
+                    Canvas.SetLeft(edge, 25 + (25 * currentStep.parent.col + 11));
                 }
-                else if (currentCol != nextNodeCol && (currentCol != -2 && nextNodeCol != -2))
+                else if (currentStep.col != currentStep.parent.col && (currentStep.col != -2 && currentStep.parent.col != -2))
                 {
                     //horizontal edge
-                    edge.Width = 26 + ((Math.Max(nextNodeCol, currentCol) - Math.Min(nextNodeCol, currentCol) - 1) * 25);
+                    edge.Width = 26 + ((Math.Max(currentStep.parent.col, currentStep.col) - Math.Min(currentStep.parent.col, currentStep.col) - 1) * 25);
                     edge.Height = 3;
                     graph.Children.Add(edge);
-                    Canvas.SetTop(edge, 25 * nextNodeRow + 11);
-                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(nextNodeCol, currentCol) + 12));
+                    Canvas.SetTop(edge, 25 * currentStep.parent.row + 11);
+                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
                 }
 
-                currentNode = currentNode.parent;
-                currentRow = nextNodeRow;
-                currentCol = nextNodeCol;
+                MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
+
+                currentStep = currentStep.parent;
             }
             
         }
