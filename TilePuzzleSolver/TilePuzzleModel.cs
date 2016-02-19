@@ -138,7 +138,7 @@ namespace TilePuzzleSolver
 
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
-            PathTreeNode root = new PathTreeNode(rows / 2, -1);
+            PathTreeNode root = new PathTreeNode(startNode.edges[0].parentRow, -1);
             Leaves.Add(root);
             
 
@@ -164,7 +164,10 @@ namespace TilePuzzleSolver
                         }
                     }
                 }
-                Leaves.RemoveAll(matchingCurrentPos);
+                if (currentStep != null)
+                {
+                    Leaves.RemoveAll(matchingCurrentPos);
+                }
 
                 if(current.color == 1)
                 {
@@ -193,7 +196,10 @@ namespace TilePuzzleSolver
                                 }
                             }
                         }
-                        Leaves.RemoveAll(matchingCurrentOrangePos);
+                        if (currentOrangeStep != null)
+                        {
+                            Leaves.RemoveAll(matchingCurrentOrangePos);
+                        }
 
                         closedOrangeSet.Add(currentOrange);
                         foreach (Edge toOrangeNeighbor in currentOrange.edges)
@@ -665,7 +671,7 @@ namespace TilePuzzleSolver
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                     }
                     else

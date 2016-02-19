@@ -46,14 +46,6 @@ namespace TilePuzzleSolver
             tilePuzzleGrid = new Button[4, 39];
 
             resizeTileGrid(4, 39);
-
-            //PathTreeNode root = new PathTreeNode(0, -1);
-            //PathTreeNode p1 = new PathTreeNode(0, 0, root);
-            //PathTreeNode p2 = new PathTreeNode(0, 1, p1);
-            //PathTreeNode p3 = new PathTreeNode(0, 3, p2);
-            //PathTreeNode p4 = new PathTreeNode(0, 1, p3);
-            //PathTreeNode p5 = new PathTreeNode(0, 4, p3);
-            //PathTreeNode p6 = new PathTreeNode(0, 5, p5);
         }
 
         /// <summary>
