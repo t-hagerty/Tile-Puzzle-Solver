@@ -311,7 +311,7 @@ namespace TilePuzzleSolver
             {
                 Rectangle edge = new Rectangle();
                 edge.Fill = new SolidColorBrush(Colors.Black);
-                if (currentStep.row != currentStep.parent.row && (currentStep.row != -2 && currentStep.parent.row != -2))
+                if (currentStep.row != currentStep.parent.row)
                 {
                     //vertical edge
                     edge.Width = 3;
@@ -320,7 +320,7 @@ namespace TilePuzzleSolver
                     Canvas.SetTop(edge, (25 * Math.Min(currentStep.parent.row, currentStep.row) + 12));
                     Canvas.SetLeft(edge, 25 + (25 * currentStep.parent.col + 11));
                 }
-                else if (currentStep.col != currentStep.parent.col && (currentStep.col != -2 && currentStep.parent.col != -2))
+                else if (currentStep.col != currentStep.parent.col)
                 {
                     //horizontal edge
                     edge.Width = 26 + ((Math.Max(currentStep.parent.col, currentStep.col) - Math.Min(currentStep.parent.col, currentStep.col) - 1) * 25);
@@ -330,7 +330,7 @@ namespace TilePuzzleSolver
                     Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
                 }
 
-                MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
+                //MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
 
                 currentStep = currentStep.parent;
             }
@@ -368,7 +368,7 @@ namespace TilePuzzleSolver
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
-                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -2 && anEdge.parentRow != -2))
+                        if(anEdge.childRow != anEdge.parentRow)
                         {
                             //vertical edge
                             edge.Width = 3;
@@ -381,7 +381,7 @@ namespace TilePuzzleSolver
                             Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
                             i = i + 5;
                         }
-                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -2 && anEdge.parentCol != -2))
+                        else if(anEdge.childCol != anEdge.parentCol)
                         {
                             //horizontal edge
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);

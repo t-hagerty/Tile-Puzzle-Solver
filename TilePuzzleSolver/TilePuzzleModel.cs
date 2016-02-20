@@ -169,6 +169,11 @@ namespace TilePuzzleSolver
                     Leaves.RemoveAll(matchingCurrentPos);
                 }
 
+                //if(currentStep != null && currentStep.row == 3 && currentStep.col == 23)
+                //{
+                //    rows = rows;
+                //}
+
                 if(current.color == 1)
                 {
                     isPlayerOrangeScented = true;
@@ -601,7 +606,9 @@ namespace TilePuzzleSolver
                         //unless the starting tile was orange, because then the move is pointless (dummy node move only useful to get
                         //rid of orange scent))
                         Node dummyNode = new Node(6);
-                        addEdge(row, col, -2, -2, nodeBeingChecked, dummyNode, true);
+                        int dummyRow = row + slideDY - dy;
+                        int dummyCol = col + slideDX - dx;
+                        addEdge(row, col, dummyRow, dummyCol, nodeBeingChecked, dummyNode, true);
                         if(nodeBeingChecked.color == 5)
                             //If the node we started from in sliding into a yellow tile was purple, we might not be sent back to that node, check to see where we slide back to.
                         {
@@ -628,11 +635,11 @@ namespace TilePuzzleSolver
                                 slideDY += dy;
                             }
 
-                            addEdge(-2, -2, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
+                            addEdge(dummyRow, dummyCol, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
                         }
                         else
                         {
-                            addEdge(-2, -2, row, col, dummyNode, nodeBeingChecked, true);
+                            addEdge(dummyRow, dummyCol, row, col, dummyNode, nodeBeingChecked, true);
                         }
                     }
                     else
