@@ -183,17 +183,18 @@ namespace TilePuzzleSolver
                 {
                     openOrangeSet = new SimplePriorityQueue<Node>();
                     openOrangeSet.Enqueue(current, current.f);
+                    currentStep.isOrangeStep = true;
                     Leaves.Add(currentStep);
 
                     while(openOrangeSet.Count > 0)
                     {
                         Node currentOrange = openOrangeSet.Dequeue();
                         PathTreeNode currentOrangeStep = null;
-                        Predicate<PathTreeNode> matchingCurrentOrangePos = aStep => aStep.row == currentOrangeStep.row && aStep.col == currentOrangeStep.col;
+                        Predicate<PathTreeNode> matchingCurrentOrangePos = aStep => aStep.isOrangeStep && aStep.row == currentOrangeStep.row && aStep.col == currentOrangeStep.col;
 
                         foreach (PathTreeNode leaf in Leaves)
                         {
-                            if (leaf.row == currentOrange.edges[0].parentRow && leaf.col == currentOrange.edges[0].parentCol)
+                            if (leaf.isOrangeStep && leaf.row == currentOrange.edges[0].parentRow && leaf.col == currentOrange.edges[0].parentCol)
                             {
                                 if (currentOrangeStep == null || currentOrangeStep.height > leaf.height)
                                 {
@@ -249,10 +250,12 @@ namespace TilePuzzleSolver
                             toOrangeNeighbor.childNode.g = currentOrangeG;
                             toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
                             openOrangeSet.UpdatePriority(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                            aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep);
+                            aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep, true);
                             Leaves.Add(aNextStep);
                         }
                     }
+                    Predicate<PathTreeNode> isOrangeStepLeaf = aStep => aStep.isOrangeStep;
+                    Leaves.RemoveAll(isOrangeStepLeaf);
 
                     isPlayerOrangeScented = false;
                     closedSet.Add(current);

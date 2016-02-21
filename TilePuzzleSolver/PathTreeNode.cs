@@ -11,6 +11,7 @@ namespace TilePuzzleSolver
         public int row;
         public int col;
         public int height;
+        public bool isOrangeStep;
 
         public PathTreeNode parent;
         public List<PathTreeNode> children;
@@ -22,6 +23,7 @@ namespace TilePuzzleSolver
             parent = null;
             height = 0;
             children = new List<PathTreeNode>(4); //Set initial capacity to 4 because most nodes won't have more than 4 edges, save memory space
+            isOrangeStep = false;
         }
 
         public PathTreeNode(int r, int c, PathTreeNode parentOfNode)
@@ -38,6 +40,26 @@ namespace TilePuzzleSolver
                 height++;
                 child = child.parent;
             }
+
+            isOrangeStep = false;
+        }
+
+        public PathTreeNode(int r, int c, PathTreeNode parentOfNode, bool orangeStep)
+        {
+            row = r;
+            col = c;
+            parent = parentOfNode;
+            children = new List<PathTreeNode>(4); //Set initial capacity to 4 because most nodes won't have more than 4 edges, save memory space
+
+            height = 0;
+            PathTreeNode child = this;
+            while (child.parent != null)
+            {
+                height++;
+                child = child.parent;
+            }
+
+            isOrangeStep = orangeStep;
         }
 
     }
