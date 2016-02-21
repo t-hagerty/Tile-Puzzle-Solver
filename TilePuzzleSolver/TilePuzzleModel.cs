@@ -621,18 +621,19 @@ namespace TilePuzzleSolver
                                 slideDY -= dy;
                             }
 
-                            if (nodes[row + slideDY, col + slideDX].color == 1 || nodes[row + slideDY, col + slideDX].color == 2 || (nodes[row + slideDY, col + slideDX].color == 4 && isWaterElectrified(row + slideDY, col + slideDX)))
+                            if ((row + slideDY >= rows || row + slideDY < 0 || col + slideDX >= cols || col + slideDX < 0) || nodes[row + slideDY, col + slideDX].color == 0)
+                            {
+                                //If sliding into a wall or a bound, backtrack to tile before the wall/bound.
+                                slideDX += dx;
+                                slideDY += dy;
+                            }
+
+                            if ((nodes[row + slideDY, col + slideDX].color == 1 || nodes[row + slideDY, col + slideDX].color == 2 || (nodes[row + slideDY, col + slideDX].color == 4 && isWaterElectrified(row + slideDY, col + slideDX))))
                             {
                                 //No use in finishing the dummy node if it would slide back to another elctrified tile or an orange one.
                                 //If this happens, we're left with an edge from nodeBeingChecked to a dummy node that has no edges. If the path-finding
                                 ///algorithm even checks this dummy node, it will be seen as a dead end, so it's not much of a problem.
                                 break;
-                            }
-                            if (nodes[row + slideDY, col + slideDX].color == 0)
-                            {
-                                //If sliding into a wall, backtrack to tile before the wall.
-                                slideDX += dx;
-                                slideDY += dy;
                             }
 
                             addEdge(dummyRow, dummyCol, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);

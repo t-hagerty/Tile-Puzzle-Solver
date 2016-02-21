@@ -198,6 +198,7 @@ namespace TilePuzzleSolver
             Blue_Button.IsEnabled = !Blue_Button.IsEnabled;
             Purple_Button.IsEnabled = !Purple_Button.IsEnabled;
             Pink_Button.IsEnabled = !Pink_Button.IsEnabled;
+            Randomize_Button.IsEnabled = !Randomize_Button.IsEnabled;
             isEditMode = !isEditMode;
 
             removeGraph();
@@ -433,6 +434,7 @@ namespace TilePuzzleSolver
 
                         Row_TextBox.Text = loadedPuzzleRows + "";
                         Column_TextBox.Text = loadedPuzzleCols + "";
+                        resizeTileGrid(puzzleRows, puzzleColumns);
                     }
                     catch(FormatException fe)
                     {
@@ -479,6 +481,46 @@ namespace TilePuzzleSolver
             }
 
             tilePuzzle.resetGraphEdges();
+        }
+
+        private void randomizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Random rng = new Random();
+
+            for (int row = 0; row < puzzleRows; row++)
+            {
+                for(int col = 0; col < puzzleColumns; col++)
+                {
+                    switch (rng.Next(7))
+                    {
+                        case 0:
+                            tilePuzzle.nodes[row, col].color = 0;
+                            break;
+                        case 1:
+                            tilePuzzle.nodes[row, col].color = 1;
+                            break;
+                        case 2:
+                            tilePuzzle.nodes[row, col].color = 2;
+                            break;
+                        case 3:
+                            tilePuzzle.nodes[row, col].color = 3;
+                            break;
+                        case 4:
+                            tilePuzzle.nodes[row, col].color = 4;
+                            break;
+                        case 5:
+                            tilePuzzle.nodes[row, col].color = 5;
+                            break;
+                        case 6:
+                            tilePuzzle.nodes[row, col].color = 6;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            resizeTileGrid(puzzleRows, puzzleColumns);
         }
     }
 
