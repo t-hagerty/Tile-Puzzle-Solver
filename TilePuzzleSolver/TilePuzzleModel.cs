@@ -528,11 +528,26 @@ namespace TilePuzzleSolver
                 case 1:
                     //Orange tiles have normal movement rules. addEdge method will add appropriate scent info to the edge.
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false); //Add edge TO this orange tile.
-                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5)
                     //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
                     //no edge should be made to go back to nodeBeingChecked.
                     {
-                        break;
+                        if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        {
+                            break;
+                        }
+                        else if ((row == 0 || row == rows - 1) && dy == 0)
+                        {
+                            break;
+                        }
+                        else if ((col == 0 || col == cols - 1) && dx == 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
                     }
                     else
                     {
@@ -546,10 +561,25 @@ namespace TilePuzzleSolver
                 case 3:
                     //Green tile, normal movement rules
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        break;
+                        if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        {
+                            break;
+                        }
+                        else if ((row == 0 || row == rows - 1) && dy == 0)
+                        {
+                            break;
+                        }
+                        else if ((col == 0 || col == cols - 1) && dx == 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
                     }
                     else
                     {
@@ -564,10 +594,25 @@ namespace TilePuzzleSolver
                     else
                     {
                         addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                        if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if (nodeBeingChecked.color == 5)
                         //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
-                            break;
+                            if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                            {
+                                break;
+                            }
+                            else if ((row == 0 || row == rows - 1) && dy == 0)
+                            {
+                                break;
+                            }
+                            else if ((col == 0 || col == cols - 1) && dx == 0)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            }
                         }
                         else
                         {
