@@ -156,7 +156,7 @@ namespace TilePuzzleSolver
 
                 foreach (PathTreeNode leaf in Leaves)
                 {
-                    if(leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
+                    if(current.edges.Count > 0 && leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
                     {
                         if(currentStep == null || currentStep.height > leaf.height)
                         {
