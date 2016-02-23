@@ -136,6 +136,11 @@ namespace TilePuzzleSolver
             SimplePriorityQueue<Node> openOrangeSet;
             List<PathTreeNode> Leaves = new List<PathTreeNode>();
 
+            if(startNode.edges.Count == 0)
+            {
+                return Leaves;
+            }
+
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
             PathTreeNode root = new PathTreeNode(startNode.edges[0].parentRow, -1);
@@ -154,9 +159,14 @@ namespace TilePuzzleSolver
                     return Leaves;
                 }
 
+                if(current.edges.Count == 0)
+                {
+                    continue;
+                }
+
                 foreach (PathTreeNode leaf in Leaves)
                 {
-                    if(current.edges.Count > 0 && leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
+                    if(leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
                     {
                         if(currentStep == null || currentStep.height > leaf.height)
                         {
@@ -168,11 +178,6 @@ namespace TilePuzzleSolver
                 {
                     Leaves.RemoveAll(matchingCurrentPos);
                 }
-
-                //if(currentStep != null && currentStep.row == 3 && currentStep.col == 23)
-                //{
-                //    rows = rows;
-                //}
 
                 if(current.color == 1)
                 {
@@ -191,6 +196,11 @@ namespace TilePuzzleSolver
                         Node currentOrange = openOrangeSet.Dequeue();
                         PathTreeNode currentOrangeStep = null;
                         Predicate<PathTreeNode> matchingCurrentOrangePos = aStep => aStep.isOrangeStep && aStep.row == currentOrangeStep.row && aStep.col == currentOrangeStep.col;
+
+                        if (currentOrange.edges.Count == 0)
+                        {
+                            continue;
+                        }
 
                         foreach (PathTreeNode leaf in Leaves)
                         {
@@ -634,7 +644,7 @@ namespace TilePuzzleSolver
                         slideDY += dy;
                     }
 
-                    if(adjacentNode.color == 0)
+                    if (adjacentNode.color == 0)
                     {
                         //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops (slide into tile against the wall)
                         nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode;

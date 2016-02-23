@@ -485,6 +485,7 @@ namespace TilePuzzleSolver
 
         private void randomizeButton_Click(object sender, RoutedEventArgs e)
         {
+            removeGraph();
             Random rng = new Random();
 
             for (int row = 0; row < puzzleRows; row++)
@@ -521,6 +522,28 @@ namespace TilePuzzleSolver
             }
 
             resizeTileGrid(puzzleRows, puzzleColumns);
+        }
+
+        private void DebugButton_Click(object sender, RoutedEventArgs e)
+        {
+            while(true)
+            {
+                randomizeButton_Click(sender, e);
+
+                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+
+                for (int r = 0; r < tilePuzzle.rows; r++)
+                {
+                    for (int c = 0; c < tilePuzzle.cols; c++)
+                    {
+                        fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
+                    }
+                }
+
+                File.WriteAllText("randomized.txt", fileText);
+
+                solveButton_Click(sender, e);
+            }
         }
     }
 

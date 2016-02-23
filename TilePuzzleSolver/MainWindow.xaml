@@ -18,6 +18,7 @@
             <CheckBox x:Name="AvoidGreen_CheckBox" Content="" HorizontalAlignment="Left" Margin="585,41,0,0" VerticalAlignment="Top" Height="36" Width="107"/>
             <Button x:Name="Save_Button" Content="Save" HorizontalAlignment="Left" Margin="962,10,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="SaveButton_Click"/>
             <Button x:Name="Load_Button" Content="Load" HorizontalAlignment="Left" Margin="962,49,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="LoadButton_Click"/>
+            <Button x:Name="Debug_Button" Content="Debug" HorizontalAlignment="Left" Margin="878,31,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="DebugButton_Click"/>
 
         </Grid>
         <Grid HorizontalAlignment="Left" Height="575" VerticalAlignment="Top" Width="100" Background="#FFDADADA">
