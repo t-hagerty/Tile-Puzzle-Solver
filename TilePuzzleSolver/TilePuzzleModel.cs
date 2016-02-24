@@ -542,21 +542,13 @@ namespace TilePuzzleSolver
                     //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
                     //no edge should be made to go back to nodeBeingChecked.
                     {
-                        if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            break;
-                        }
-                        else if ((row == 0 || row == rows - 1) && dy == 0)
-                        {
-                            break;
-                        }
-                        else if ((col == 0 || col == cols - 1) && dx == 0)
-                        {
-                            break;
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            break;
                         }
                     }
                     else
@@ -574,21 +566,13 @@ namespace TilePuzzleSolver
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            break;
-                        }
-                        else if ((row == 0 || row == rows - 1) && dy == 0)
-                        {
-                            break;
-                        }
-                        else if ((col == 0 || col == cols - 1) && dx == 0)
-                        {
-                            break;
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            break;
                         }
                     }
                     else
@@ -607,21 +591,13 @@ namespace TilePuzzleSolver
                         if (nodeBeingChecked.color == 5)
                         //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
-                            if (!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                            if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                             {
-                                break;
-                            }
-                            else if ((row == 0 || row == rows - 1) && dy == 0)
-                            {
-                                break;
-                            }
-                            else if ((col == 0 || col == cols - 1) && dx == 0)
-                            {
-                                break;
+                                addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                             }
                             else
                             {
-                                addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                                break;
                             }
                         }
                         else
@@ -646,8 +622,10 @@ namespace TilePuzzleSolver
 
                     if (adjacentNode.color == 0)
                     {
+                        slideDX -= dx;
+                        slideDY -= dy;
                         //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops (slide into tile against the wall)
-                        nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode;
+                        adjacentNode = nodes[row + slideDY - dy, col + slideDX - dx];
                     }
 
                     if(col + slideDX == cols && adjacentNode.color == 5)
@@ -723,21 +701,13 @@ namespace TilePuzzleSolver
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        if(!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if(row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            break;
-                        }
-                        else if((row == 0 || row == rows - 1) && dy == 0)
-                        {
-                            break;
-                        }
-                        else if((col == 0 || col == cols - 1) && dx == 0)
-                        {
-                            break;
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            break;
                         }
                     }
                     else
