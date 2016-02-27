@@ -21,8 +21,7 @@ namespace TilePuzzleSolver
         //public int h = int.MaxValue; //Value of the heuristic function, the underestimated or exact (NEVER overestimated) distance it will take to get from this node to goal node.
 
         public int color = -1; //0 represents red, 1 orange, 2 yellow, 3 green, 4 blue, 5 purple, 6 pink.
-
-        public Node parent = null; //Used to store sequential steps in the path, the start node will have no parent, the first step's parent will be start node, etc.
+        
         public List<Edge> edges;
         
         /// <summary>
@@ -54,7 +53,6 @@ namespace TilePuzzleSolver
         public void resetNodeRelations()
         {
             edges = new List<Edge>(4);
-            parent = null;
         }
 
         /// <summary>
@@ -67,21 +65,35 @@ namespace TilePuzzleSolver
 
             foreach(Edge anEdge in edges)
             {
-                if(anEdge.childRow == -2 && anEdge.childCol == -2)
-                {
-                    if (anEdge.childNode.edges.Count > 0)
+                //if(anEdge.childNode.color == 4 )
+                //{
+                //    if (anEdge.childNode.edges.Count > 0)
+                //    {
+                //        edgeList = edgeList + "Edge to dummy node which leads to " + anEdge.childNode.edges[0].childRow + ", " + anEdge.childNode.edges[0].childCol + " with color " + anEdge.childNode.edges[0].childNode.color + "\n";
+                //    }
+                //    else
+                //    {
+                //        edgeList = edgeList + "Edge to dummy node which has nowhere valid/useful to go back to \n";
+                //    }
+                //}
+                //else
+                //{
+                    if (anEdge.isScented)
                     {
-                        edgeList = edgeList + "Edge to dummy node which leads to " + anEdge.childNode.edges[0].childRow + ", " + anEdge.childNode.edges[0].childCol + " with color " + anEdge.childNode.edges[0].childNode.color + "\n";
+                        if (anEdge.isOrangeScented)
+                        {
+                            edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with orange scent" + "\n";
+                        }
+                        else
+                        {
+                            edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
+                        }
                     }
                     else
                     {
-                        edgeList = edgeList + "Edge to dummy node which has nowhere valid/useful to go back to \n";
+                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
                     }
-                }
-                else
-                {
-                    edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
-                }
+                //}
             }
 
             return edgeList;

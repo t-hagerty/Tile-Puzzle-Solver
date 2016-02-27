@@ -123,7 +123,7 @@ namespace TilePuzzleSolver
         /// <summary>
         /// 
         /// </summary>
-        public void solve()
+        public List<PathTreeNode> solve()
         {
             resetGraphEdges();
             buildGraph();
@@ -134,17 +134,49 @@ namespace TilePuzzleSolver
             SimplePriorityQueue<Node> openSet = new SimplePriorityQueue<Node>();
             List<Node> closedOrangeSet = new List<Node>();
             SimplePriorityQueue<Node> openOrangeSet;
+            List<PathTreeNode> Leaves = new List<PathTreeNode>();
+
+            if(startNode.edges.Count == 0)
+            {
+                return Leaves;
+            }
 
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
+            PathTreeNode root = new PathTreeNode(startNode.edges[0].parentRow, -1);
+            Leaves.Add(root);
+            
 
             while (openSet.Count > 0)
             {
                 Node current = openSet.Dequeue();
+                PathTreeNode currentStep = null;
 
-                if(current == endNode)
+                Predicate<PathTreeNode> matchingCurrentPos = aStep => aStep.row == currentStep.row && aStep.col == currentStep.col;
+
+                if (current == endNode)
                 {
-                    return;
+                    return Leaves;
+                }
+
+                if(current.edges.Count == 0)
+                {
+                    continue;
+                }
+
+                foreach (PathTreeNode leaf in Leaves)
+                {
+                    if(leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
+                    {
+                        if(currentStep == null || currentStep.height > leaf.height)
+                        {
+                            currentStep = leaf;
+                        }
+                    }
+                }
+                if (currentStep != null)
+                {
+                    Leaves.RemoveAll(matchingCurrentPos);
                 }
 
                 if(current.color == 1)
@@ -156,10 +188,34 @@ namespace TilePuzzleSolver
                 {
                     openOrangeSet = new SimplePriorityQueue<Node>();
                     openOrangeSet.Enqueue(current, current.f);
+                    currentStep.isOrangeStep = true;
+                    Leaves.Add(currentStep);
 
                     while(openOrangeSet.Count > 0)
                     {
                         Node currentOrange = openOrangeSet.Dequeue();
+                        PathTreeNode currentOrangeStep = null;
+                        Predicate<PathTreeNode> matchingCurrentOrangePos = aStep => aStep.isOrangeStep && aStep.row == currentOrangeStep.row && aStep.col == currentOrangeStep.col;
+
+                        if (currentOrange.edges.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        foreach (PathTreeNode leaf in Leaves)
+                        {
+                            if (leaf.isOrangeStep && leaf.row == currentOrange.edges[0].parentRow && leaf.col == currentOrange.edges[0].parentCol)
+                            {
+                                if (currentOrangeStep == null || currentOrangeStep.height > leaf.height)
+                                {
+                                    currentOrangeStep = leaf;
+                                }
+                            }
+                        }
+                        if (currentOrangeStep != null)
+                        {
+                            Leaves.RemoveAll(matchingCurrentOrangePos);
+                        }
 
                         closedOrangeSet.Add(currentOrange);
                         foreach (Edge toOrangeNeighbor in currentOrange.edges)
@@ -175,13 +231,16 @@ namespace TilePuzzleSolver
                             {
                                 continue;
                             }
-                            if (toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented)
+
+                            PathTreeNode aNextStep;
+
+                            if ((toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented) || toOrangeNeighbor.childNode == endNode)
                             {
                                 toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
                                 toOrangeNeighbor.childNode.g = currentOrangeG;
                                 openSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                                //closedOrangeSet.Add(toOrangeNeighbor.childNode);
-                                toOrangeNeighbor.childNode.parent = currentOrange;
+                                aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep);
+                                Leaves.Add(aNextStep);
                                 continue;
                             }
                             if(toOrangeNeighbor.childNode.color == 4)
@@ -201,9 +260,12 @@ namespace TilePuzzleSolver
                             toOrangeNeighbor.childNode.g = currentOrangeG;
                             toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
                             openOrangeSet.UpdatePriority(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                            toOrangeNeighbor.childNode.parent = currentOrange;
+                            aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep, true);
+                            Leaves.Add(aNextStep);
                         }
                     }
+                    Predicate<PathTreeNode> isOrangeStepLeaf = aStep => aStep.isOrangeStep;
+                    Leaves.RemoveAll(isOrangeStepLeaf);
 
                     isPlayerOrangeScented = false;
                     closedSet.Add(current);
@@ -219,6 +281,7 @@ namespace TilePuzzleSolver
                         }
 
                         int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+                        PathTreeNode aNextStep;
 
                         if (!openSet.Contains(toNeighbor.childNode))
                         {
@@ -233,10 +296,13 @@ namespace TilePuzzleSolver
                         toNeighbor.childNode.g = currentG;
                         toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
                         openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
-                        toNeighbor.childNode.parent = current;
+                        aNextStep = new PathTreeNode(toNeighbor.childRow, toNeighbor.childCol, currentStep);
+                        Leaves.Add(aNextStep);
                     }
                 }
             }
+
+            return Leaves;
         }
 
         private int heuristic(int col)
@@ -472,11 +538,18 @@ namespace TilePuzzleSolver
                 case 1:
                     //Orange tiles have normal movement rules. addEdge method will add appropriate scent info to the edge.
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false); //Add edge TO this orange tile.
-                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5)
                     //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
                     //no edge should be made to go back to nodeBeingChecked.
                     {
-                        break;
+                        if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
+                        {
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -490,10 +563,17 @@ namespace TilePuzzleSolver
                 case 3:
                     //Green tile, normal movement rules
                     addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                    if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                    if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        break;
+                        if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
+                        {
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -508,10 +588,17 @@ namespace TilePuzzleSolver
                     else
                     {
                         addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
-                        if (nodeBeingChecked.color == 5 && !(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if (nodeBeingChecked.color == 5)
                         //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
-                            break;
+                            if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
+                            {
+                                addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                         else
                         {
@@ -533,10 +620,12 @@ namespace TilePuzzleSolver
                         slideDY += dy;
                     }
 
-                    if(adjacentNode.color == 0)
+                    if (adjacentNode.color == 0)
                     {
+                        slideDX -= dx;
+                        slideDY -= dy;
                         //backtrack one, the purple tile before the red tile (wall/impassable) becomes where the edge stops (slide into tile against the wall)
-                        nodes[row + slideDY - dy, col + slideDX - dx] = adjacentNode;
+                        adjacentNode = nodes[row + slideDY - dy, col + slideDX - dx];
                     }
 
                     if(col + slideDX == cols && adjacentNode.color == 5)
@@ -553,7 +642,9 @@ namespace TilePuzzleSolver
                         //unless the starting tile was orange, because then the move is pointless (dummy node move only useful to get
                         //rid of orange scent))
                         Node dummyNode = new Node(6);
-                        addEdge(row, col, -2, -2, nodeBeingChecked, dummyNode, true);
+                        int dummyRow = row + slideDY - dy;
+                        int dummyCol = col + slideDX - dx;
+                        addEdge(row, col, dummyRow, dummyCol, nodeBeingChecked, dummyNode, true);
                         if(nodeBeingChecked.color == 5)
                             //If the node we started from in sliding into a yellow tile was purple, we might not be sent back to that node, check to see where we slide back to.
                         {
@@ -566,25 +657,26 @@ namespace TilePuzzleSolver
                                 slideDY -= dy;
                             }
 
-                            if (nodes[row + slideDY, col + slideDX].color == 1 || nodes[row + slideDY, col + slideDX].color == 2 || (nodes[row + slideDY, col + slideDX].color == 4 && isWaterElectrified(row + slideDY, col + slideDX)))
+                            if ((row + slideDY >= rows || row + slideDY < 0 || col + slideDX >= cols || col + slideDX < 0) || nodes[row + slideDY, col + slideDX].color == 0)
+                            {
+                                //If sliding into a wall or a bound, backtrack to tile before the wall/bound.
+                                slideDX += dx;
+                                slideDY += dy;
+                            }
+
+                            if ((nodes[row + slideDY, col + slideDX].color == 1 || nodes[row + slideDY, col + slideDX].color == 2 || (nodes[row + slideDY, col + slideDX].color == 4 && isWaterElectrified(row + slideDY, col + slideDX))))
                             {
                                 //No use in finishing the dummy node if it would slide back to another elctrified tile or an orange one.
                                 //If this happens, we're left with an edge from nodeBeingChecked to a dummy node that has no edges. If the path-finding
                                 ///algorithm even checks this dummy node, it will be seen as a dead end, so it's not much of a problem.
                                 break;
                             }
-                            if (nodes[row + slideDY, col + slideDX].color == 0)
-                            {
-                                //If sliding into a wall, backtrack to tile before the wall.
-                                slideDX += dx;
-                                slideDY += dy;
-                            }
 
-                            addEdge(-2, -2, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
+                            addEdge(dummyRow, dummyCol, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
                         }
                         else
                         {
-                            addEdge(-2, -2, row, col, dummyNode, nodeBeingChecked, true);
+                            addEdge(dummyRow, dummyCol, row, col, dummyNode, nodeBeingChecked, true);
                         }
                     }
                     else
@@ -609,21 +701,13 @@ namespace TilePuzzleSolver
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        if(!(row == 0 || row == rows - 1 || col == 0 || col == cols - 1 || nodes[row - dy, col - dx].color == 0))
+                        if(row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            break;
-                        }
-                        else if((row == 0 || row == rows - 1) && dy == 0)
-                        {
-                            break;
-                        }
-                        else if((col == 0 || col == cols - 1) && dx == 0)
-                        {
-                            break;
+                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                            break;
                         }
                     }
                     else

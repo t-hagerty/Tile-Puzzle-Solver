@@ -45,7 +45,7 @@ namespace TilePuzzleSolver
             tilePuzzle = new TilePuzzleModel(puzzleRows, puzzleColumns, startPuzzle);
             tilePuzzleGrid = new Button[4, 39];
 
-            resizeTileGrid(4, 39);   
+            resizeTileGrid(4, 39);
         }
 
         /// <summary>
@@ -198,6 +198,7 @@ namespace TilePuzzleSolver
             Blue_Button.IsEnabled = !Blue_Button.IsEnabled;
             Purple_Button.IsEnabled = !Purple_Button.IsEnabled;
             Pink_Button.IsEnabled = !Pink_Button.IsEnabled;
+            Randomize_Button.IsEnabled = !Randomize_Button.IsEnabled;
             isEditMode = !isEditMode;
 
             removeGraph();
@@ -280,7 +281,7 @@ namespace TilePuzzleSolver
             removeGraph();
 
             //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
-            tilePuzzle.solve();
+            List<PathTreeNode> deadEnds = tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
             Canvas graph = new Canvas();
@@ -288,66 +289,51 @@ namespace TilePuzzleSolver
             graph.Height = TilePuzzleContainer_Grid.Height;
             TilePuzzleContainer_Grid.Children.Add(graph);
 
-            Node currentNode = tilePuzzle.endNode;
-            int currentRow;
-            int currentCol;
-            if (currentNode.parent == null)
+            PathTreeNode currentStep = null;
+
+            foreach(PathTreeNode deadEnd in deadEnds)
+            {
+                if(deadEnd.col == puzzleColumns)
+                {
+                    if(currentStep == null || currentStep.height > deadEnd.height)
+                    {
+                        currentStep = deadEnd;
+                    }
+                }
+            }
+
+            if(currentStep == null)
             {
                 MessageBox.Show("No solution found!");
                 return;
             }
-            else
+
+            while (currentStep.parent != null)
             {
-                currentRow = currentNode.parent.edges[0].parentRow;
-                currentCol = tilePuzzle.cols;
-            }
-
-            for(int r = 0; r < puzzleRows; r++)
-            {
-                for (int c = 0; c < puzzleColumns; c++)
-                {
-                    if (tilePuzzle.nodes[r, c].parent != null)
-                    {
-                        MessageBox.Show("Parent of tile at " + r + ", " + c + ": " + tilePuzzle.nodes[r,c].parent.edges[0].parentRow + ", " + tilePuzzle.nodes[r, c].parent.edges[0].parentCol);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Tile at " + r + ", " + c + " is an orphan");
-                    }
-                }
-            }
-
-            while (currentNode.parent != null)
-            {
-                int nextNodeRow = currentNode.parent.edges[0].parentRow;
-                int nextNodeCol = currentNode.parent.edges[0].parentCol;
-
-                MessageBox.Show("Path from " + currentRow + ", " + currentCol + " to " + nextNodeRow + ", " + nextNodeCol);
-
                 Rectangle edge = new Rectangle();
                 edge.Fill = new SolidColorBrush(Colors.Black);
-                if (currentRow != nextNodeRow && (currentRow != -2 && nextNodeRow != -2))
+                if (currentStep.row != currentStep.parent.row)
                 {
                     //vertical edge
                     edge.Width = 3;
-                    edge.Height = 26 + ((Math.Max(currentRow, nextNodeRow) - Math.Min(currentRow, nextNodeRow) - 1) * 25);
+                    edge.Height = 26 + ((Math.Max(currentStep.row, currentStep.parent.row) - Math.Min(currentStep.row, currentStep.parent.row) - 1) * 25);
                     graph.Children.Add(edge);
-                    Canvas.SetTop(edge, (25 * Math.Min(nextNodeRow, currentRow) + 12));
-                    Canvas.SetLeft(edge, 25 + (25 * nextNodeCol + 11));
+                    Canvas.SetTop(edge, (25 * Math.Min(currentStep.parent.row, currentStep.row) + 12));
+                    Canvas.SetLeft(edge, 25 + (25 * currentStep.parent.col + 11));
                 }
-                else if (currentCol != nextNodeCol && (currentCol != -2 && nextNodeCol != -2))
+                else if (currentStep.col != currentStep.parent.col)
                 {
                     //horizontal edge
-                    edge.Width = 26 + ((Math.Max(nextNodeCol, currentCol) - Math.Min(nextNodeCol, currentCol) - 1) * 25);
+                    edge.Width = 26 + ((Math.Max(currentStep.parent.col, currentStep.col) - Math.Min(currentStep.parent.col, currentStep.col) - 1) * 25);
                     edge.Height = 3;
                     graph.Children.Add(edge);
-                    Canvas.SetTop(edge, 25 * nextNodeRow + 11);
-                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(nextNodeCol, currentCol) + 12));
+                    Canvas.SetTop(edge, 25 * currentStep.parent.row + 11);
+                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
                 }
 
-                currentNode = currentNode.parent;
-                currentRow = nextNodeRow;
-                currentCol = nextNodeCol;
+                //MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
+
+                currentStep = currentStep.parent;
             }
             
         }
@@ -383,7 +369,7 @@ namespace TilePuzzleSolver
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
-                        if(anEdge.childRow != anEdge.parentRow && (anEdge.childRow != -2 && anEdge.parentRow != -2))
+                        if(anEdge.childRow != anEdge.parentRow)
                         {
                             //vertical edge
                             edge.Width = 3;
@@ -396,7 +382,7 @@ namespace TilePuzzleSolver
                             Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
                             i = i + 5;
                         }
-                        else if(anEdge.childCol != anEdge.parentCol && (anEdge.childCol != -2 && anEdge.parentCol != -2))
+                        else if(anEdge.childCol != anEdge.parentCol)
                         {
                             //horizontal edge
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
@@ -448,6 +434,7 @@ namespace TilePuzzleSolver
 
                         Row_TextBox.Text = loadedPuzzleRows + "";
                         Column_TextBox.Text = loadedPuzzleCols + "";
+                        resizeTileGrid(puzzleRows, puzzleColumns);
                     }
                     catch(FormatException fe)
                     {
@@ -494,6 +481,69 @@ namespace TilePuzzleSolver
             }
 
             tilePuzzle.resetGraphEdges();
+        }
+
+        private void randomizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            removeGraph();
+            Random rng = new Random();
+
+            for (int row = 0; row < puzzleRows; row++)
+            {
+                for(int col = 0; col < puzzleColumns; col++)
+                {
+                    switch (rng.Next(7))
+                    {
+                        case 0:
+                            tilePuzzle.nodes[row, col].color = 0;
+                            break;
+                        case 1:
+                            tilePuzzle.nodes[row, col].color = 1;
+                            break;
+                        case 2:
+                            tilePuzzle.nodes[row, col].color = 2;
+                            break;
+                        case 3:
+                            tilePuzzle.nodes[row, col].color = 3;
+                            break;
+                        case 4:
+                            tilePuzzle.nodes[row, col].color = 4;
+                            break;
+                        case 5:
+                            tilePuzzle.nodes[row, col].color = 5;
+                            break;
+                        case 6:
+                            tilePuzzle.nodes[row, col].color = 6;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            resizeTileGrid(puzzleRows, puzzleColumns);
+        }
+
+        private void DebugButton_Click(object sender, RoutedEventArgs e)
+        {
+            while(true)
+            {
+                randomizeButton_Click(sender, e);
+
+                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+
+                for (int r = 0; r < tilePuzzle.rows; r++)
+                {
+                    for (int c = 0; c < tilePuzzle.cols; c++)
+                    {
+                        fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
+                    }
+                }
+
+                File.WriteAllText("randomized.txt", fileText);
+
+                solveButton_Click(sender, e);
+            }
         }
     }
 
