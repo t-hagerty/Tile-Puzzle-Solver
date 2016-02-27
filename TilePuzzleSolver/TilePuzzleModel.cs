@@ -542,6 +542,15 @@ namespace TilePuzzleSolver
                     //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
                     //no edge should be made to go back to nodeBeingChecked.
                     {
+                        if (col - dx < 0)
+                        {
+                            break; //Would be an edge to startNode, but we don't need this edge
+                        }
+                        if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
+                        {
+                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            break;
+                        }
                         if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
                             addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
@@ -566,6 +575,15 @@ namespace TilePuzzleSolver
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
+                        if(col - dx < 0)
+                        {
+                            break; //Would be an edge to startNode, but we don't need this edge
+                        }
+                        if((row - dy >= 0 || row - dy < rows) && col - dx == cols)
+                        {
+                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            break;
+                        }
                         if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
                             addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
@@ -591,6 +609,15 @@ namespace TilePuzzleSolver
                         if (nodeBeingChecked.color == 5)
                         //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
+                            if (col - dx < 0)
+                            {
+                                break; //Would be an edge to startNode, but we don't need this edge
+                            }
+                            if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
+                            {
+                                addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                                break;
+                            }
                             if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                             {
                                 addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
@@ -701,7 +728,16 @@ namespace TilePuzzleSolver
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
-                        if(row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
+                        if (col - dx < 0)
+                        {
+                            break; //Would be an edge to startNode, but we don't need this edge
+                        }
+                        if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
+                        {
+                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            break;
+                        }
+                        if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
                             addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
                         }
