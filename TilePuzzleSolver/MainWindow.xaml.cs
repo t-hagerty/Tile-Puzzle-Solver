@@ -26,8 +26,8 @@ namespace TilePuzzleSolver
     {
         private bool isEditMode = false;
         private int selectedColor = 6;
-        private int puzzleColumns = 39;
-        private int puzzleRows = 4;
+        private int puzzleColumns;
+        private int puzzleRows;
         Button[,] tilePuzzleGrid;
         TilePuzzleModel tilePuzzle;
 
@@ -42,7 +42,7 @@ namespace TilePuzzleSolver
                                                  {3, 1, 5, 4, 1, 0, 0, 4, 2, 0, 0, 4, 4, 4, 0, 0, 0, 6, 6, 0, 4, 6, 3, 0, 5, 1, 4, 1, 5, 5, 6, 4, 0, 3, 0, 3, 0, 3, 0},
                                                  {6, 0, 6, 6, 4, 4, 0, 1, 0, 6, 4, 5, 0, 6, 2, 3, 5, 1, 5, 2, 5, 5, 0, 0, 6, 1, 4, 5, 5, 4, 2, 6, 0, 3, 0, 3, 0, 3, 0},
                                                  {3, 2, 4, 2, 0, 6, 3, 1, 5, 5, 1, 6, 0, 1, 6, 1, 0, 4, 4, 6, 1, 4, 3, 1, 6, 4, 5, 1, 2, 4, 6, 6, 3, 3, 3, 3, 0, 3, 3}};
-            tilePuzzle = new TilePuzzleModel(puzzleRows, puzzleColumns, startPuzzle);
+            tilePuzzle = new TilePuzzleModel(4, 39, startPuzzle);
             tilePuzzleGrid = new Button[4, 39];
 
             resizeTileGrid(4, 39);
@@ -55,74 +55,149 @@ namespace TilePuzzleSolver
         /// <param name="newCols">The new amount of columns o the puzzle</param>
         public void resizeTileGrid(int newRows, int newCols)
         {
-            TilePuzzle_UniformGrid.Children.Clear();
-
-            puzzleColumns = newCols;
-            puzzleRows = newRows;
-            TilePuzzle_UniformGrid.Columns = puzzleColumns + 2;
-            TilePuzzle_UniformGrid.Rows = puzzleRows;
-            tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
-            TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns) * 25;
-            TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
-            TilePuzzleContainer_Grid.Width = TilePuzzle_UniformGrid.Width;
-            TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
-
-            Button[,] newTilePuzzleGrid = new Button[puzzleRows, puzzleColumns + 2];
-
-            for(int r = 0; r < puzzleRows; r++)
+            if (newCols == puzzleColumns)
             {
-                newTilePuzzleGrid[r, 0] = new Button();
-                newTilePuzzleGrid[r, 0].Background = new SolidColorBrush(Colors.Gray);
-                newTilePuzzleGrid[r, 0].IsEnabled = false;
-                newTilePuzzleGrid[r, 0].BorderThickness = new Thickness(0);
-
-                for (int c = 1; c <= puzzleColumns; c++)
+                if (newRows == puzzleRows)
                 {
-                    newTilePuzzleGrid[r, c] = new Button();
-                    newTilePuzzleGrid[r, c].Click += editTile_Click;
-                    newTilePuzzleGrid[r, c].BorderThickness = new Thickness(0);
-                    switch (tilePuzzle.nodes[r,c-1].color)
+                    return; //No need to resize
+                }
+                else if(newRows > puzzleRows) //If only new rows are being added, we can resize without clearing TilePuzzle_UniformGrid, saving time.
+                {
+                    TilePuzzle_UniformGrid.Rows = newRows;
+                    tilePuzzle.resizePuzzle(newRows, puzzleColumns);
+                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                    TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
+
+                    for(int r = puzzleRows; r < newRows; r++)
                     {
-                        case 0:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
-                            break;
-                        case 1:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
-                            break;
-                        case 2:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
-                            break;
-                        case 3:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
-                            break;
-                        case 4:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
-                            break;
-                        case 5:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
-                            break;
-                        case 6:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                            break;
-                        default:
-                            newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                            break;
+                        Button startSideButton = new Button();
+                        startSideButton.Background = new SolidColorBrush(Colors.Gray);
+                        startSideButton.IsEnabled = false;
+                        startSideButton.BorderThickness = new Thickness(0);
+                        TilePuzzle_UniformGrid.Children.Add(startSideButton);
+
+                        for (int c = 1; c <= puzzleColumns; c++)
+                        {
+                            Button aButton = new Button();
+                            aButton.Click += editTile_Click;
+                            aButton.BorderThickness = new Thickness(0);
+                            switch (tilePuzzle.nodes[r, c - 1].color)
+                            {
+                                case 0:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
+                                    break;
+                                case 1:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
+                                    break;
+                                case 2:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
+                                    break;
+                                case 3:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
+                                    break;
+                                case 4:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
+                                    break;
+                                case 5:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
+                                    break;
+                                case 6:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                                    break;
+                                default:
+                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                                    break;
+                            }
+                            TilePuzzle_UniformGrid.Children.Add(aButton);
+                        }
+                        Button endSideButton = new Button();
+                        endSideButton.Background = new SolidColorBrush(Colors.Gray);
+                        endSideButton.IsEnabled = false;
+                        endSideButton.BorderThickness = new Thickness(0);
+                        TilePuzzle_UniformGrid.Children.Add(endSideButton);
                     }
+                    puzzleRows = newRows;
+                }
+                else
+                {
+                    TilePuzzle_UniformGrid.Rows = newRows;
+                    tilePuzzle.resizePuzzle(newRows, puzzleColumns);
+                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                    TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
+                    TilePuzzle_UniformGrid.Children.RemoveRange(newRows * (puzzleColumns + 2), TilePuzzle_UniformGrid.Children.Count - (newRows * (puzzleColumns + 2)));
+                    puzzleRows = newRows;
+                }
+            }
+            else
+            {
+                TilePuzzle_UniformGrid.Children.Clear();
+                puzzleColumns = newCols;
+                puzzleRows = newRows;
+                TilePuzzle_UniformGrid.Columns = puzzleColumns + 2;
+                TilePuzzle_UniformGrid.Rows = puzzleRows;
+                tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns) * 25;
+                TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                TilePuzzleContainer_Grid.Width = TilePuzzle_UniformGrid.Width;
+                TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
+
+                Button[,] newTilePuzzleGrid = new Button[puzzleRows, puzzleColumns + 2];
+
+                for (int r = 0; r < puzzleRows; r++)
+                {
+                    newTilePuzzleGrid[r, 0] = new Button();
+                    newTilePuzzleGrid[r, 0].Background = new SolidColorBrush(Colors.Gray);
+                    newTilePuzzleGrid[r, 0].IsEnabled = false;
+                    newTilePuzzleGrid[r, 0].BorderThickness = new Thickness(0);
+
+                    for (int c = 1; c <= puzzleColumns; c++)
+                    {
+                        newTilePuzzleGrid[r, c] = new Button();
+                        newTilePuzzleGrid[r, c].Click += editTile_Click;
+                        newTilePuzzleGrid[r, c].BorderThickness = new Thickness(0);
+                        switch (tilePuzzle.nodes[r, c - 1].color)
+                        {
+                            case 0:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
+                                break;
+                            case 1:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
+                                break;
+                            case 2:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
+                                break;
+                            case 3:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
+                                break;
+                            case 4:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
+                                break;
+                            case 5:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
+                                break;
+                            case 6:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                                break;
+                            default:
+                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                                break;
+                        }
+                    }
+
+                    newTilePuzzleGrid[r, puzzleColumns + 1] = new Button();
+                    newTilePuzzleGrid[r, puzzleColumns + 1].Background = new SolidColorBrush(Colors.Gray);
+                    newTilePuzzleGrid[r, puzzleColumns + 1].IsEnabled = false;
+                    newTilePuzzleGrid[r, puzzleColumns + 1].BorderThickness = new Thickness(0);
                 }
 
-                newTilePuzzleGrid[r, puzzleColumns + 1] = new Button();
-                newTilePuzzleGrid[r, puzzleColumns + 1].Background = new SolidColorBrush(Colors.Gray);
-                newTilePuzzleGrid[r, puzzleColumns + 1].IsEnabled = false;
-                newTilePuzzleGrid[r, puzzleColumns + 1].BorderThickness = new Thickness(0);
-            }
+                tilePuzzleGrid = newTilePuzzleGrid;
 
-            tilePuzzleGrid = newTilePuzzleGrid;
-
-            for(int r = 0; r < puzzleRows; r++)
-            {
-                for(int c = 0; c < puzzleColumns + 2; c++)
+                for (int r = 0; r < puzzleRows; r++)
                 {
-                    TilePuzzle_UniformGrid.Children.Add(tilePuzzleGrid[r, c]);
+                    for (int c = 0; c < puzzleColumns + 2; c++)
+                    {
+                        TilePuzzle_UniformGrid.Children.Add(tilePuzzleGrid[r, c]);
+                    }
                 }
             }
         }
@@ -255,8 +330,6 @@ namespace TilePuzzleSolver
                 else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
                 {
                     resizeTileGrid(rows, cols);
-                    puzzleRows = rows;
-                    puzzleColumns = cols;
                 }
                 else
                 {
@@ -434,7 +507,6 @@ namespace TilePuzzleSolver
 
                         Row_TextBox.Text = loadedPuzzleRows + "";
                         Column_TextBox.Text = loadedPuzzleCols + "";
-                        resizeTileGrid(puzzleRows, puzzleColumns);
                     }
                     catch(FormatException fe)
                     {
