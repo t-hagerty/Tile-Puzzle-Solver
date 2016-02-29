@@ -55,6 +55,8 @@ namespace TilePuzzleSolver
         /// <param name="newCols">The new amount of columns o the puzzle</param>
         public void resizeTileGrid(int newRows, int newCols)
         {
+            removeGraph();
+
             if (newCols == puzzleColumns)
             {
                 if (newRows == puzzleRows)
@@ -79,35 +81,9 @@ namespace TilePuzzleSolver
                         for (int c = 1; c <= puzzleColumns; c++)
                         {
                             Button aButton = new Button();
-                            aButton.Click += editTile_Click;
+                            aButton.Click += tile_Click;
                             aButton.BorderThickness = new Thickness(0);
-                            switch (tilePuzzle.nodes[r, c - 1].color)
-                            {
-                                case 0:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
-                                    break;
-                                case 1:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
-                                    break;
-                                case 2:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
-                                    break;
-                                case 3:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
-                                    break;
-                                case 4:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
-                                    break;
-                                case 5:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
-                                    break;
-                                case 6:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                                    break;
-                                default:
-                                    aButton.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                                    break;
-                            }
+                            aButton.Background = getTileColor(tilePuzzle.nodes[r, c - 1].color);
                             TilePuzzle_UniformGrid.Children.Add(aButton);
                         }
                         Button endSideButton = new Button();
@@ -153,35 +129,10 @@ namespace TilePuzzleSolver
                     for (int c = 1; c <= puzzleColumns; c++)
                     {
                         newTilePuzzleGrid[r, c] = new Button();
-                        newTilePuzzleGrid[r, c].Click += editTile_Click;
+                        newTilePuzzleGrid[r, c].Click += tile_Click;
                         newTilePuzzleGrid[r, c].BorderThickness = new Thickness(0);
-                        switch (tilePuzzle.nodes[r, c - 1].color)
-                        {
-                            case 0:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
-                                break;
-                            case 1:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
-                                break;
-                            case 2:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
-                                break;
-                            case 3:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
-                                break;
-                            case 4:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
-                                break;
-                            case 5:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
-                                break;
-                            case 6:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                                break;
-                            default:
-                                newTilePuzzleGrid[r, c].Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                                break;
-                        }
+
+                        newTilePuzzleGrid[r, c].Background = getTileColor(tilePuzzle.nodes[r, c - 1].color);
                     }
 
                     newTilePuzzleGrid[r, puzzleColumns + 1] = new Button();
@@ -202,6 +153,41 @@ namespace TilePuzzleSolver
             }
         }
 
+        private SolidColorBrush getTileColor(int tileType)
+        {
+            SolidColorBrush tileColor = new SolidColorBrush();
+
+            switch (tileType)
+            {
+                case 0:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
+                    break;
+                case 1:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
+                    break;
+                case 2:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
+                    break;
+                case 3:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
+                    break;
+                case 4:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
+                    break;
+                case 5:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
+                    break;
+                case 6:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                    break;
+                default:
+                    tileColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
+                    break;
+            }
+
+            return tileColor;
+        }
+
         /// <summary>
         /// Changes the color of a tile to the selected color if in edit mode.
         /// 
@@ -209,7 +195,7 @@ namespace TilePuzzleSolver
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void editTile_Click(object sender, RoutedEventArgs e)
+        private void tile_Click(object sender, RoutedEventArgs e)
         {
             int index = TilePuzzle_UniformGrid.Children.IndexOf(sender as Button);
             int row = index / (puzzleColumns + 2);
@@ -217,40 +203,8 @@ namespace TilePuzzleSolver
 
             if (isEditMode)
             {
-                switch (selectedColor)
-                {
-                    case 0:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF72015")); //red
-                        
-                        tilePuzzle.nodes[row, col].color = 0;
-                        break;
-                    case 1:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFF98626")); //orange
-                        tilePuzzle.nodes[row, col].color = 1;
-                        break;
-                    case 2:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFFF637")); //yellow
-                        tilePuzzle.nodes[row, col].color = 2;
-                        break;
-                    case 3:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF6EFF37")); //green
-                        tilePuzzle.nodes[row, col].color = 3;
-                        break;
-                    case 4:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF48028F")); //blue
-                        tilePuzzle.nodes[row, col].color = 4;
-                        break;
-                    case 5:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC303C3")); //purple
-                        tilePuzzle.nodes[row, col].color = 5;
-                        break;
-                    case 6:
-                        (sender as Button).Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFFF6CEB")); //pink
-                        tilePuzzle.nodes[row, col].color = 6;
-                        break;
-                    default:
-                        break;
-                }
+                tilePuzzle.nodes[row, col].color = selectedColor;
+                (sender as Button).Background = getTileColor(tilePuzzle.nodes[row, col].color);
             }
             else
             {
@@ -312,32 +266,6 @@ namespace TilePuzzleSolver
         private void pinkButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 6;
-        }
-
-        /// <summary>
-        /// Fires whenever the text is changed in the row/column text boxes. Must check and make sure the input is valid before doing anything to the puzzle/size
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void sizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            int rows, cols;
-            if (Row_TextBox != null && Column_TextBox != null && TilePuzzle_UniformGrid != null) 
-            //WPF fires textchanged event when initializing components, column_textbox gets initialized first and triggers this event, but row_textbox is still uninitialized
-            //Also, the puzzle uniformgrid is initialized after the two textboxes, so it tries to run resizeTileGrid on the uninitialized uniformgrid unless we make sure it's not null
-            {
-                if(Row_TextBox.Text == "" || Column_TextBox.Text == "") { /*Do nothing, wait for input*/ }
-                else if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
-                {
-                    resizeTileGrid(rows, cols);
-                }
-                else
-                {
-                    MessageBox.Show("Please enter a valid integer value");
-                    Row_TextBox.Text = puzzleRows.ToString();
-                    Column_TextBox.Text = puzzleColumns.ToString();
-                }
-            }
         }
 
         /// <summary>
@@ -480,8 +408,6 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
-            removeGraph();
-
             OpenFileDialog loadFileWindow = new OpenFileDialog();
             loadFileWindow.Filter = "Text files (*.txt)|*.txt";
             if(loadFileWindow.ShowDialog() == true)
@@ -494,8 +420,6 @@ namespace TilePuzzleSolver
                         int loadedPuzzleCols = int.Parse(reader.ReadLine());
 
                         tilePuzzle.resizePuzzle(loadedPuzzleRows, loadedPuzzleCols);
-                        puzzleRows = loadedPuzzleRows;
-                        puzzleColumns = loadedPuzzleCols;
 
                         for (int r = 0; r < loadedPuzzleRows; r++)
                         {
@@ -568,32 +492,39 @@ namespace TilePuzzleSolver
                     {
                         case 0:
                             tilePuzzle.nodes[row, col].color = 0;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(0);
                             break;
                         case 1:
                             tilePuzzle.nodes[row, col].color = 1;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(1);
                             break;
                         case 2:
                             tilePuzzle.nodes[row, col].color = 2;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(2);
                             break;
                         case 3:
                             tilePuzzle.nodes[row, col].color = 3;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(3);
                             break;
                         case 4:
                             tilePuzzle.nodes[row, col].color = 4;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(4);
                             break;
                         case 5:
                             tilePuzzle.nodes[row, col].color = 5;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(5);
                             break;
                         case 6:
                             tilePuzzle.nodes[row, col].color = 6;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(6);
                             break;
                         default:
+                            tilePuzzle.nodes[row, col].color = 6;
+                            (TilePuzzle_UniformGrid.Children[(row * (puzzleColumns + 2)) + col + 1] as Button).Background = getTileColor(6);
                             break;
                     }
                 }
             }
-
-            resizeTileGrid(puzzleRows, puzzleColumns);
         }
 
         private void DebugButton_Click(object sender, RoutedEventArgs e)
@@ -615,6 +546,21 @@ namespace TilePuzzleSolver
                 File.WriteAllText("randomized.txt", fileText);
 
                 solveButton_Click(sender, e);
+            }
+        }
+
+        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            int rows, cols;
+            if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
+            {
+                resizeTileGrid(rows, cols);
+            }
+            else
+            {
+                MessageBox.Show("Please enter valid integer values");
+                Row_TextBox.Text = puzzleRows.ToString();
+                Column_TextBox.Text = puzzleColumns.ToString();
             }
         }
     }

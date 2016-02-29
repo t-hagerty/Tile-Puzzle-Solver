@@ -5,20 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TilePuzzleSolver"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1050">
+        Title="Tile Puzzle Solver" Height="700" Width="1050">
     <Grid>
         <Grid HorizontalAlignment="Left" Height="94" Margin="0,575,0,0" VerticalAlignment="Top" Width="1042" Background="#FFCDCDCD">
             <Button x:Name="Solve_Button" Content="SOLVE" HorizontalAlignment="Left" Height="35" Margin="15,5,0,49" Width="70" Click="solveButton_Click"/>
             <Button x:Name="ShowGraph" Content="GRAPH" HorizontalAlignment="Left" Height="35" Margin="15,45,0,9" Width="70" Click="graphButton_Click"/>
-            <Label x:Name="Size" Content="SIZE:" HorizontalAlignment="Left" Margin="104,22,0,0" VerticalAlignment="Top" Height="41" Width="82" FontSize="26.667"/>
-            <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="29" Margin="250,32,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
-            <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="29" Margin="173,33,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center" TextChanged="sizeTextBox_TextChanged"/>
-            <Label x:Name="x" Content="X" HorizontalAlignment="Left" Margin="225,29,0,0" VerticalAlignment="Top" Height="50" Width="39" FontSize="18.667"/>
+            <Label x:Name="Size" Content="SIZE:" HorizontalAlignment="Left" Margin="104,4,0,0" VerticalAlignment="Top" Height="41" Width="82" FontSize="26.667"/>
+            <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="29" Margin="252,14,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
+            <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="28" Margin="170,14,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
+            <Label x:Name="x" Content="X" HorizontalAlignment="Left" Margin="225,11,0,0" VerticalAlignment="Top" Height="50" Width="39" FontSize="18.667"/>
             <Label x:Name="AvoidGreenTiles" Content="AVOID GREEN TILES?" HorizontalAlignment="Left" Margin="320,22,0,0" VerticalAlignment="Top" Height="41" Width="258" FontSize="26.667"/>
             <CheckBox x:Name="AvoidGreen_CheckBox" Content="" HorizontalAlignment="Left" Margin="585,41,0,0" VerticalAlignment="Top" Height="36" Width="107"/>
-            <Button x:Name="Save_Button" Content="Save" HorizontalAlignment="Left" Margin="962,10,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="SaveButton_Click"/>
-            <Button x:Name="Load_Button" Content="Load" HorizontalAlignment="Left" Margin="962,49,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="LoadButton_Click"/>
-            <Button x:Name="Debug_Button" Content="Debug" HorizontalAlignment="Left" Margin="878,31,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="DebugButton_Click"/>
+            <Button x:Name="Save_Button" Content="SAVE" HorizontalAlignment="Left" Margin="962,10,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="SaveButton_Click"/>
+            <Button x:Name="Load_Button" Content="LOAD" HorizontalAlignment="Left" Margin="962,49,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="LoadButton_Click"/>
+            <Button x:Name="Debug_Button" Content="DEBUG" HorizontalAlignment="Left" Margin="878,31,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="DebugButton_Click"/>
+            <Button x:Name="Resize_Button" Content="RESIZE" HorizontalAlignment="Left" Margin="201,50,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="ResizeButton_Click"/>
 
         </Grid>
         <Grid HorizontalAlignment="Left" Height="575" VerticalAlignment="Top" Width="100" Background="#FFDADADA">
