@@ -65,35 +65,21 @@ namespace TilePuzzleSolver
 
             foreach(Edge anEdge in edges)
             {
-                //if(anEdge.childNode.color == 4 )
-                //{
-                //    if (anEdge.childNode.edges.Count > 0)
-                //    {
-                //        edgeList = edgeList + "Edge to dummy node which leads to " + anEdge.childNode.edges[0].childRow + ", " + anEdge.childNode.edges[0].childCol + " with color " + anEdge.childNode.edges[0].childNode.color + "\n";
-                //    }
-                //    else
-                //    {
-                //        edgeList = edgeList + "Edge to dummy node which has nowhere valid/useful to go back to \n";
-                //    }
-                //}
-                //else
-                //{
-                    if (anEdge.isScented)
+                if (anEdge.isScented)
+                {
+                    if (anEdge.isOrangeScented)
                     {
-                        if (anEdge.isOrangeScented)
-                        {
-                            edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with orange scent" + "\n";
-                        }
-                        else
-                        {
-                            edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
-                        }
+                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with orange scent" + "\n";
                     }
                     else
                     {
-                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
                     }
-                //}
+                }
+                else
+                {
+                    edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+                }
             }
 
             return edgeList;

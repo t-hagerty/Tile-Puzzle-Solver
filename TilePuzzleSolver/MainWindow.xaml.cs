@@ -28,7 +28,6 @@ namespace TilePuzzleSolver
         private int selectedColor = 6;
         private int puzzleColumns;
         private int puzzleRows;
-        Button[,] tilePuzzleGrid;
         TilePuzzleModel tilePuzzle;
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace TilePuzzleSolver
                     }
                     puzzleRows = newRows;
                 }
-                else
+                else //If only removing rows, we can cut them off the end of the collection of TilePuzzle_UniformGrid's children without having to rebuild.
                 {
                     TilePuzzle_UniformGrid.Rows = newRows;
                     tilePuzzle.resizePuzzle(newRows, puzzleColumns);
@@ -142,6 +141,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tileType">The integer that represents the color/type of the tile whose SolidColorBrush we're returning</param>
+        /// <returns>The SolidColorBrush color that matches the type of the tile whose background color we wish to find</returns>
         private SolidColorBrush getTileColor(int tileType)
         {
             SolidColorBrush tileColor = new SolidColorBrush();
@@ -180,7 +184,7 @@ namespace TilePuzzleSolver
         /// <summary>
         /// Changes the color of a tile to the selected color if in edit mode.
         /// 
-        /// If not in edit mode, doubles as a function to pop up info about the edges a node has (for testing purposes)
+        /// If not in edit mode, pops up info about the edges a node has (for testing purposes)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -270,7 +274,6 @@ namespace TilePuzzleSolver
             }
             removeGraph();
 
-            //Something representing path, maybe ordered list of tuples? = tilePuzzle.Solve();
             List<PathTreeNode> deadEnds = tilePuzzle.solve();
 
             //Go through the path and draw/highlight it on the screen.
@@ -281,6 +284,7 @@ namespace TilePuzzleSolver
 
             PathTreeNode currentStep = null;
 
+            //Find the step that goes to the endNode that has the lowest height in the tree (if any)
             foreach(PathTreeNode deadEnd in deadEnds)
             {
                 if(deadEnd.col == puzzleColumns)
@@ -294,10 +298,12 @@ namespace TilePuzzleSolver
 
             if(currentStep == null)
             {
+                //If currentStep == null, no steps were made onto the endNode, so no solution
                 MessageBox.Show("No solution found!");
                 return;
             }
 
+            //Trace through the steps from endNode w/ lowest height to startNode (when currentStep.parent will == null) to draw through the shortest found path
             while (currentStep.parent != null)
             {
                 Rectangle edge = new Rectangle();
@@ -320,8 +326,6 @@ namespace TilePuzzleSolver
                     Canvas.SetTop(edge, 25 * currentStep.parent.row + 11);
                     Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
                 }
-
-                //MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
 
                 currentStep = currentStep.parent;
             }
@@ -352,9 +356,6 @@ namespace TilePuzzleSolver
             {
                 for(int c = 0; c < puzzleColumns; c++)
                 {
-                    //FOR TESTING:
-                    int i = 0;
-
                     foreach (Edge anEdge in tilePuzzle.nodes[r,c].edges)
                     {
                         Rectangle edge = new Rectangle();
@@ -366,11 +367,7 @@ namespace TilePuzzleSolver
                             edge.Height = 10 + ((Math.Max(anEdge.parentRow, anEdge.childRow) - Math.Min(anEdge.parentRow, anEdge.childRow) - 1) * 25);
                             graph.Children.Add(edge);
                             Canvas.SetTop(edge, (25 * Math.Min(anEdge.parentRow, anEdge.childRow) + 20));
-                            //Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
-
-                            //FOR TESTING:
-                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 3 + i));
-                            i = i + 5;
+                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
                         }
                         else if(anEdge.childCol != anEdge.parentCol)
                         {
@@ -378,12 +375,8 @@ namespace TilePuzzleSolver
                             edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
                             edge.Height = 3;
                             graph.Children.Add(edge);
-                            //Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
+                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
                             Canvas.SetLeft(edge, 25 + (25 * Math.Min(anEdge.parentCol, anEdge.childCol) + 20));
-
-                            //FOR TESTING:
-                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 3 + i);
-                            i = i + 5;
                         }
                     }
                 }
@@ -468,6 +461,11 @@ namespace TilePuzzleSolver
             tilePuzzle.resetGraphEdges();
         }
 
+        /// <summary>
+        /// Randomizes the tile colors in the puzzle to make a new puzzle (with the same size)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void randomizeButton_Click(object sender, RoutedEventArgs e)
         {
             removeGraph();
@@ -516,6 +514,12 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// For testing, continuously generates a random puzzle, saves it, then trys to solve it, so if it encounters a bug and crashes, the last saved
+        /// randomized.txt puzzle will contain a situation that causes an unanticipated bug.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DebugButton_Click(object sender, RoutedEventArgs e)
         {
             while(true)
@@ -538,6 +542,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Resizes the puzzle based on the #rows and columns input by the user in the respective text boxes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
             int rows, cols;
