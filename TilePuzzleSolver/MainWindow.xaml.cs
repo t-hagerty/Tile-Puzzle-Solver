@@ -433,11 +433,11 @@ namespace TilePuzzleSolver
             saveFileWindow.Filter = "Text files (*.txt)|*.txt";
             if(saveFileWindow.ShowDialog() == true)
             {
-                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+                String fileText = puzzleRows + Environment.NewLine + puzzleColumns + Environment.NewLine;
 
-                for(int r = 0; r < tilePuzzle.rows; r++)
+                for(int r = 0; r < puzzleRows; r++)
                 {
-                    for(int c = 0; c < tilePuzzle.cols; c++)
+                    for(int c = 0; c < puzzleColumns; c++)
                     {
                         fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
                     }
@@ -526,11 +526,11 @@ namespace TilePuzzleSolver
             {
                 randomizeButton_Click(sender, e);
 
-                String fileText = tilePuzzle.rows + Environment.NewLine + tilePuzzle.cols + Environment.NewLine;
+                String fileText = puzzleRows + Environment.NewLine + puzzleColumns + Environment.NewLine;
 
-                for (int r = 0; r < tilePuzzle.rows; r++)
+                for (int r = 0; r < puzzleRows; r++)
                 {
-                    for (int c = 0; c < tilePuzzle.cols; c++)
+                    for (int c = 0; c < puzzleColumns; c++)
                     {
                         fileText += tilePuzzle.nodes[r, c].color + Environment.NewLine;
                     }
@@ -552,11 +552,18 @@ namespace TilePuzzleSolver
             int rows, cols;
             if (int.TryParse(Row_TextBox.Text, out rows) && int.TryParse(Column_TextBox.Text, out cols) && rows >= 0 && cols >= 0)
             {
+                if(rows > 2147483645 || cols > 2147483645)
+                {
+                    MessageBox.Show("Maximum value is 2147483645"); //slightly less than 2^31 -1, but maximum value we'll allow (there's a few places puzzleRow/Col gets <=2 added to it)
+                    Row_TextBox.Text = puzzleRows.ToString();
+                    Column_TextBox.Text = puzzleColumns.ToString();
+                    return;
+                }
                 resizeTileGrid(rows, cols);
             }
             else
             {
-                MessageBox.Show("Please enter valid integer values");
+                MessageBox.Show("Please enter valid 32 bit integer values");
                 Row_TextBox.Text = puzzleRows.ToString();
                 Column_TextBox.Text = puzzleColumns.ToString();
             }

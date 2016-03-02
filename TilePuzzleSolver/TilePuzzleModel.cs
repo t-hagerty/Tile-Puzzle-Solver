@@ -47,8 +47,8 @@ namespace TilePuzzleSolver
             start/endNodes).
         */
 
-        public int rows;
-        public int cols;
+        private int rows;
+        private int cols;
 
         /// <summary>
         /// Constructor for a color tile puzzle with input for both number of rows and colors, and specifying the colors of each tile from
@@ -83,9 +83,19 @@ namespace TilePuzzleSolver
         /// <param name="newCols">The new number of columns of the puzzle/grid</param>
         public void resizePuzzle(int newRows, int newCols)
         {
-            Node[,] newSizePuzzle = new Node[newRows, newCols];
+            Node[,] newSizePuzzle;
+            try
+            {
+                newSizePuzzle = new Node[newRows, newCols];
+            }
+            catch (OutOfMemoryException e)
+            {
+                newRows = rows;
+                newCols = cols;
+                return;
+            }
 
-            if(newRows < rows)
+            if (newRows < rows)
             {
                 rows = newRows;
             }
@@ -373,7 +383,7 @@ namespace TilePuzzleSolver
         /// <param name="nodeBeingChecked">The current node being looked at to find edges</param>
         /// <param name="row">The row of the node being checked</param>
         /// <param name="col">The column of the node being checked</param>
-        public void findEdgesForNode(Node nodeBeingChecked, int row, int col)
+        private void findEdgesForNode(Node nodeBeingChecked, int row, int col)
         {
             switch (nodeBeingChecked.color)
             {
@@ -523,7 +533,7 @@ namespace TilePuzzleSolver
         /// <param name="col">The column of nodeBeingChecked</param>
         /// <param name="dx">The change in left/right position (change in column). Should only be -1, 0, or 1</param>
         /// <param name="dy">The change in up/down position (change in row). Should only be -1, 0, or 1</param>
-        public void checkForEdgeInDirection(Node nodeBeingChecked, int row, int col, int dx, int dy)
+        private void checkForEdgeInDirection(Node nodeBeingChecked, int row, int col, int dx, int dy)
         {
             //If direction takes us out of bounds, stop here.
             if(row + dy < 0 || row + dy >= rows || col + dx < 0 || col + dx >= cols) { return; }
@@ -766,7 +776,7 @@ namespace TilePuzzleSolver
         /// <param name="edgeGoesFrom">The node that the edge starts from</param>
         /// <param name="edgeGoesTo">The node that the edge goes to</param>
         /// <param name="goesOverPurple">True if in the checking for edges process, we've gone over a purple tile. False otherwise.</param>
-        public void addEdge(int rowFrom, int colFrom, int rowTo, int colTo, Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
+        private void addEdge(int rowFrom, int colFrom, int rowTo, int colTo, Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
         {
             //Extra catch in edge-making in case of bugs: make sure neither node involved is an inaccessible tile
             if(edgeGoesFrom.color == 0 || edgeGoesFrom.color == 2 || (edgeGoesFrom.color == 4 && isWaterElectrified(rowFrom, colFrom)) ||
@@ -798,7 +808,7 @@ namespace TilePuzzleSolver
         /// <param name="waterRow">Row of the water tile being checked</param>
         /// <param name="waterCol">Column of the water tile being checked</param>
         /// <returns>True if the blue tile is next to a yellow tile, false otherwise</returns>
-        public bool isWaterElectrified(int waterRow, int waterCol)
+        private bool isWaterElectrified(int waterRow, int waterCol)
         {
             if ((waterRow - 1 >= 0 && nodes[waterRow - 1, waterCol].color == 2) || (waterRow + 1 < rows && nodes[waterRow + 1, waterCol].color == 2) || 
                     (cols > waterCol + 1 && nodes[waterRow, waterCol + 1].color == 2) || (waterCol - 1 >= 0 && nodes[waterRow, waterCol - 1].color == 2))
