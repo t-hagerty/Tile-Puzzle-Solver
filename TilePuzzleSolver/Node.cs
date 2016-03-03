@@ -18,7 +18,8 @@ namespace TilePuzzleSolver
     {
         public int f = int.MaxValue; //The overall value f(x) = g + h, where g is the min distance from starting node, h the value of the heuristic function. Lower f value nodes are tested first because it's predicted they'll be the best move.
         public int g = int.MaxValue; //Min distance from starting node to this node.
-        //public int h = int.MaxValue; //Value of the heuristic function, the underestimated or exact (NEVER overestimated) distance it will take to get from this node to goal node.
+        public int row;
+        public int col;
 
         public int color = -1; //0 represents red, 1 orange, 2 yellow, 3 green, 4 blue, 5 purple, 6 pink.
         
@@ -37,13 +38,15 @@ namespace TilePuzzleSolver
         /// Creates a new node with the specified color
         /// </summary>
         /// <param name="tileType">The color of the new node. Should be an int from 0 - 6 (0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - blue, 5 - purple, 6 - pink)</param>
-        public Node(int tileType)
+        public Node(int tileType, int r, int c)
         {
             if(tileType < 0 || tileType > 6)
             {
                 tileType = 6;
             }
             color = tileType;
+            row = r;
+            col = c;
             edges = new List<Edge>(4);
         }
 
@@ -69,16 +72,16 @@ namespace TilePuzzleSolver
                 {
                     if (anEdge.isOrangeScented)
                     {
-                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with orange scent" + "\n";
+                        edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color " + anEdge.childNode.color + " with orange scent" + "\n";
                     }
                     else
                     {
-                        edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
+                        edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
                     }
                 }
                 else
                 {
-                    edgeList = edgeList + "Edge to " + anEdge.childRow + ", " + anEdge.childCol + " to tile with color " + anEdge.childNode.color + "\n";
+                    edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color " + anEdge.childNode.color + "\n";
                 }
             }
 

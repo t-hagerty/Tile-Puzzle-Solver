@@ -308,7 +308,20 @@ namespace TilePuzzleSolver
             {
                 Rectangle edge = new Rectangle();
                 edge.Fill = new SolidColorBrush(Colors.Black);
-                if (currentStep.row != currentStep.parent.row)
+                if (currentStep.col != currentStep.parent.col)
+                {
+                    if(currentStep.parent.col == -1)
+                    {
+                        currentStep.parent.row = currentStep.row;
+                    }
+                    //horizontal edge
+                    edge.Width = 26 + ((Math.Max(currentStep.parent.col, currentStep.col) - Math.Min(currentStep.parent.col, currentStep.col) - 1) * 25);
+                    edge.Height = 3;
+                    graph.Children.Add(edge);
+                    Canvas.SetTop(edge, 25 * currentStep.parent.row + 11);
+                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
+                }
+                else if (currentStep.row != currentStep.parent.row)
                 {
                     //vertical edge
                     edge.Width = 3;
@@ -317,15 +330,8 @@ namespace TilePuzzleSolver
                     Canvas.SetTop(edge, (25 * Math.Min(currentStep.parent.row, currentStep.row) + 12));
                     Canvas.SetLeft(edge, 25 + (25 * currentStep.parent.col + 11));
                 }
-                else if (currentStep.col != currentStep.parent.col)
-                {
-                    //horizontal edge
-                    edge.Width = 26 + ((Math.Max(currentStep.parent.col, currentStep.col) - Math.Min(currentStep.parent.col, currentStep.col) - 1) * 25);
-                    edge.Height = 3;
-                    graph.Children.Add(edge);
-                    Canvas.SetTop(edge, 25 * currentStep.parent.row + 11);
-                    Canvas.SetLeft(edge, 25 + (25 * Math.Min(currentStep.parent.col, currentStep.col) + 12));
-                }
+
+                //MessageBox.Show("Step from " + currentStep.row + ", " + currentStep.col + " to " + currentStep.parent.row + ", " + currentStep.parent.col);
 
                 currentStep = currentStep.parent;
             }
@@ -360,23 +366,23 @@ namespace TilePuzzleSolver
                     {
                         Rectangle edge = new Rectangle();
                         edge.Fill = new SolidColorBrush(Colors.Black);
-                        if(anEdge.childRow != anEdge.parentRow)
+                        if (anEdge.childNode.col != c)
+                        {
+                            //horizontal edge
+                            edge.Width = 10 + ((Math.Max(c, anEdge.childNode.col) - Math.Min(c, anEdge.childNode.col) - 1) * 25);
+                            edge.Height = 3;
+                            graph.Children.Add(edge);
+                            Canvas.SetTop(edge, 25 * r + 11);
+                            Canvas.SetLeft(edge, 25 + (25 * Math.Min(c, anEdge.childNode.col) + 20));
+                        }
+                        else if (anEdge.childNode.row != r)
                         {
                             //vertical edge
                             edge.Width = 3;
-                            edge.Height = 10 + ((Math.Max(anEdge.parentRow, anEdge.childRow) - Math.Min(anEdge.parentRow, anEdge.childRow) - 1) * 25);
+                            edge.Height = 10 + ((Math.Max(r, anEdge.childNode.row) - Math.Min(r, anEdge.childNode.row) - 1) * 25);
                             graph.Children.Add(edge);
-                            Canvas.SetTop(edge, (25 * Math.Min(anEdge.parentRow, anEdge.childRow) + 20));
-                            Canvas.SetLeft(edge, 25 + (25 * anEdge.parentCol + 11));
-                        }
-                        else if(anEdge.childCol != anEdge.parentCol)
-                        {
-                            //horizontal edge
-                            edge.Width = 10 + ((Math.Max(anEdge.parentCol, anEdge.childCol) - Math.Min(anEdge.parentCol, anEdge.childCol) - 1) * 25);
-                            edge.Height = 3;
-                            graph.Children.Add(edge);
-                            Canvas.SetTop(edge, 25 * anEdge.parentRow + 11);
-                            Canvas.SetLeft(edge, 25 + (25 * Math.Min(anEdge.parentCol, anEdge.childCol) + 20));
+                            Canvas.SetTop(edge, (25 * Math.Min(r, anEdge.childNode.row) + 20));
+                            Canvas.SetLeft(edge, 25 + (25 * c + 11));
                         }
                     }
                 }
@@ -407,12 +413,14 @@ namespace TilePuzzleSolver
                         {
                             for (int c = 0; c < loadedPuzzleCols; c++)
                             {
-                                tilePuzzle.nodes[r, c] = new Node(int.Parse(reader.ReadLine()));
+                                tilePuzzle.nodes[r, c] = new Node(int.Parse(reader.ReadLine()), r, c);
                             }
                         }
 
                         Row_TextBox.Text = loadedPuzzleRows + "";
                         Column_TextBox.Text = loadedPuzzleCols + "";
+
+                        resizeTileGrid(loadedPuzzleRows, loadedPuzzleCols);
                     }
                     catch(FormatException fe)
                     {

@@ -63,15 +63,15 @@ namespace TilePuzzleSolver
             cols = c;
             
             //Pink tiles (6) have no rules concerning moving onto them, so we make start/end "pink" as they're not on the puzzle.
-            startNode = new Node(6);
-            endNode = new Node(6);
+            startNode = new Node(6, 0, -1);
+            endNode = new Node(6, 0, cols);
 
             nodes = new Node[rows, cols];
             for(int i = 0; i < rows; i++)
             {
                 for(int j = 0; j < cols; j++)
                 {
-                    nodes[i, j] = new Node(tileGridColors[i, j]);
+                    nodes[i, j] = new Node(tileGridColors[i, j], i, j);
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace TilePuzzleSolver
                 for (int c = cols; c < newCols; c++)
                 {
                     //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
-                    newSizePuzzle[r, c] = new Node(6);
+                    newSizePuzzle[r, c] = new Node(6, r, c);
                 }
             }
             for (int r = rows; r < newRows; r++)
@@ -121,13 +121,14 @@ namespace TilePuzzleSolver
                 for (int c = 0; c < newCols; c++)
                 {
                     //For all tiles in the new space of the larger puzzle, we have no information about their color yet, set them as pink.
-                    newSizePuzzle[r, c] = new Node(6);
+                    newSizePuzzle[r, c] = new Node(6, r, c);
                 }
             }
 
             nodes = newSizePuzzle;
             rows = newRows;
             cols = newCols;
+            endNode.col = cols;
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace TilePuzzleSolver
 
             startNode.g = 0;
             openSet.Enqueue(startNode, 0);
-            PathTreeNode root = new PathTreeNode(startNode.edges[0].parentRow, -1);
+            PathTreeNode root = new PathTreeNode(startNode.row, -1);
             Leaves.Add(root);
             
 
@@ -176,7 +177,7 @@ namespace TilePuzzleSolver
 
                 foreach (PathTreeNode leaf in Leaves)
                 {
-                    if(leaf.row == current.edges[0].parentRow && leaf.col == current.edges[0].parentCol)
+                    if(leaf.row == current.row && leaf.col == current.col)
                     {
                         if(currentStep == null || currentStep.height > leaf.height)
                         {
@@ -214,7 +215,7 @@ namespace TilePuzzleSolver
 
                         foreach (PathTreeNode leaf in Leaves)
                         {
-                            if (leaf.isOrangeStep && leaf.row == currentOrange.edges[0].parentRow && leaf.col == currentOrange.edges[0].parentCol)
+                            if (leaf.isOrangeStep && leaf.row == currentOrange.row && leaf.col == currentOrange.col)
                             {
                                 if (currentOrangeStep == null || currentOrangeStep.height > leaf.height)
                                 {
@@ -234,8 +235,16 @@ namespace TilePuzzleSolver
                             {
                                 continue;
                             }
+                            if (currentOrange.col == -1)
+                            {
+                                currentOrange.row = toOrangeNeighbor.childNode.row;
+                            }
+                            else if (toOrangeNeighbor.childNode.col == cols)
+                            {
+                                toOrangeNeighbor.childNode.row = currentOrange.row;
+                            }
 
-                            int currentOrangeG = currentOrange.g + Math.Abs((toOrangeNeighbor.childRow - toOrangeNeighbor.parentRow) + (toOrangeNeighbor.childCol - toOrangeNeighbor.parentCol));
+                            int currentOrangeG = currentOrange.g + Math.Abs((toOrangeNeighbor.childNode.row - currentOrange.row) + (toOrangeNeighbor.childNode.col - currentOrange.col));
 
                             if (openSet.Contains(toOrangeNeighbor.childNode) && toOrangeNeighbor.childNode.g < currentOrangeG)
                             {
@@ -246,10 +255,10 @@ namespace TilePuzzleSolver
 
                             if ((toOrangeNeighbor.isScented && !toOrangeNeighbor.isOrangeScented) || toOrangeNeighbor.childNode == endNode)
                             {
-                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childNode.col);
                                 toOrangeNeighbor.childNode.g = currentOrangeG;
                                 openSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                                aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep);
+                                aNextStep = new PathTreeNode(toOrangeNeighbor.childNode.row, toOrangeNeighbor.childNode.col, currentOrangeStep);
                                 Leaves.Add(aNextStep);
                                 continue;
                             }
@@ -259,7 +268,7 @@ namespace TilePuzzleSolver
                             }
                             if (!openOrangeSet.Contains(toOrangeNeighbor.childNode))
                             {
-                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                                toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childNode.col);
                                 openOrangeSet.Enqueue(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
                             }
                             else if (currentOrangeG >= toOrangeNeighbor.childNode.g)
@@ -268,9 +277,9 @@ namespace TilePuzzleSolver
                             }
 
                             toOrangeNeighbor.childNode.g = currentOrangeG;
-                            toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childCol);
+                            toOrangeNeighbor.childNode.f = currentOrangeG + heuristic(toOrangeNeighbor.childNode.col);
                             openOrangeSet.UpdatePriority(toOrangeNeighbor.childNode, toOrangeNeighbor.childNode.f);
-                            aNextStep = new PathTreeNode(toOrangeNeighbor.childRow, toOrangeNeighbor.childCol, currentOrangeStep, true);
+                            aNextStep = new PathTreeNode(toOrangeNeighbor.childNode.row, toOrangeNeighbor.childNode.col, currentOrangeStep, true);
                             Leaves.Add(aNextStep);
                         }
                     }
@@ -289,13 +298,21 @@ namespace TilePuzzleSolver
                         {
                             continue;
                         }
+                        if(current.col == -1)
+                        {
+                            current.row = toNeighbor.childNode.row;
+                        }
+                        else if(toNeighbor.childNode.col == cols)
+                        {
+                            toNeighbor.childNode.row = current.row;
+                        }
 
-                        int currentG = current.g + Math.Abs((toNeighbor.childRow - toNeighbor.parentRow) + (toNeighbor.childCol - toNeighbor.parentCol));
+                        int currentG = current.g + Math.Abs((toNeighbor.childNode.row - current.row) + (toNeighbor.childNode.col - current.col));
                         PathTreeNode aNextStep;
 
                         if (!openSet.Contains(toNeighbor.childNode))
                         {
-                            toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
+                            toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childNode.col);
                             openSet.Enqueue(toNeighbor.childNode, toNeighbor.childNode.f);
                         }
                         else if (currentG >= toNeighbor.childNode.g)
@@ -304,9 +321,9 @@ namespace TilePuzzleSolver
                         }
 
                         toNeighbor.childNode.g = currentG;
-                        toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childCol);
+                        toNeighbor.childNode.f = currentG + heuristic(toNeighbor.childNode.col);
                         openSet.UpdatePriority(toNeighbor.childNode, toNeighbor.childNode.f);
-                        aNextStep = new PathTreeNode(toNeighbor.childRow, toNeighbor.childCol, currentStep);
+                        aNextStep = new PathTreeNode(toNeighbor.childNode.row, toNeighbor.childNode.col, currentStep);
                         Leaves.Add(aNextStep);
                     }
                 }
@@ -678,7 +695,7 @@ namespace TilePuzzleSolver
                         //(If the purple slide ends in electricity, we make a dummy node (see explanation in case 2 of findEdgesForNode)
                         //unless the starting tile was orange, because then the move is pointless (dummy node move only useful to get
                         //rid of orange scent))
-                        Node dummyNode = new Node(6);
+                        Node dummyNode = new Node(6, adjacentNode.row, adjacentNode.col);
                         int dummyRow = row + slideDY - dy;
                         int dummyCol = col + slideDX - dx;
                         addEdge(row, col, dummyRow, dummyCol, nodeBeingChecked, dummyNode, true);
