@@ -18,6 +18,7 @@ namespace TilePuzzleSolver
     {
         public int f = int.MaxValue; //The overall value f(x) = g + h, where g is the min distance from starting node, h the value of the heuristic function. Lower f value nodes are tested first because it's predicted they'll be the best move.
         public int g = int.MaxValue; //Min distance from starting node to this node.
+        public int weight;
         public int row;
         public int col;
 
@@ -32,6 +33,7 @@ namespace TilePuzzleSolver
         {
             color = 6;
             edges = new List<Edge>(4);
+            weight = 0;
         }
 
         /// <summary>
@@ -47,6 +49,7 @@ namespace TilePuzzleSolver
             color = tileType;
             row = r;
             col = c;
+            weight = 0;
             edges = new List<Edge>(4);
         }
 

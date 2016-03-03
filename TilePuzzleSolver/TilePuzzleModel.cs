@@ -244,7 +244,7 @@ namespace TilePuzzleSolver
                                 toOrangeNeighbor.childNode.row = currentOrange.row;
                             }
 
-                            int currentOrangeG = currentOrange.g + Math.Abs((toOrangeNeighbor.childNode.row - currentOrange.row) + (toOrangeNeighbor.childNode.col - currentOrange.col));
+                            int currentOrangeG = currentOrange.g + Math.Abs((toOrangeNeighbor.childNode.row - currentOrange.row) + (toOrangeNeighbor.childNode.col - currentOrange.col)) + toOrangeNeighbor.childNode.weight;
 
                             if (openSet.Contains(toOrangeNeighbor.childNode) && toOrangeNeighbor.childNode.g < currentOrangeG)
                             {
@@ -307,7 +307,7 @@ namespace TilePuzzleSolver
                             toNeighbor.childNode.row = current.row;
                         }
 
-                        int currentG = current.g + Math.Abs((toNeighbor.childNode.row - current.row) + (toNeighbor.childNode.col - current.col));
+                        int currentG = current.g + Math.Abs((toNeighbor.childNode.row - current.row) + (toNeighbor.childNode.col - current.col)) + toNeighbor.childNode.weight;
                         PathTreeNode aNextStep;
 
                         if (!openSet.Contains(toNeighbor.childNode))

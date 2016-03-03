@@ -130,6 +130,10 @@ namespace TilePuzzleSolver
                         aButton.BorderThickness = new Thickness(0);
                         aButton.Background = getTileColor(tilePuzzle.nodes[r, c - 1].color);
                         TilePuzzle_UniformGrid.Children.Add(aButton);
+                        if (tilePuzzle.nodes[r, c - 1].color == 3 && AvoidGreen_CheckBox.IsChecked == true)
+                        {
+                            tilePuzzle.nodes[r, c - 1].weight = newCols;
+                        }
                     }
 
                     Button endSideButton = new Button();
@@ -197,6 +201,14 @@ namespace TilePuzzleSolver
             if (isEditMode)
             {
                 tilePuzzle.nodes[row, col].color = selectedColor;
+                if (selectedColor == 3 && AvoidGreen_CheckBox.IsChecked == true)
+                {
+                    tilePuzzle.nodes[row, col].weight = puzzleColumns;
+                }
+                else
+                {
+                    tilePuzzle.nodes[row, col].weight = 0;
+                }
                 (sender as Button).Background = getTileColor(tilePuzzle.nodes[row, col].color);
             }
             else
@@ -574,6 +586,27 @@ namespace TilePuzzleSolver
                 MessageBox.Show("Please enter valid 32 bit integer values");
                 Row_TextBox.Text = puzzleRows.ToString();
                 Column_TextBox.Text = puzzleColumns.ToString();
+            }
+        }
+
+        private void avoidGreen_Clicked(object sender, RoutedEventArgs e)
+        {
+            removeGraph();
+            int greenWeight = 0;
+            if(AvoidGreen_CheckBox.IsChecked == true)
+            {
+                greenWeight = puzzleColumns;
+            }
+
+            for(int r = 0; r < puzzleRows;  r++)
+            {
+                for(int c = 0; c < puzzleColumns; c++)
+                {
+                    if(tilePuzzle.nodes[r, c].color == 3)
+                    {
+                        tilePuzzle.nodes[r, c].weight = greenWeight;
+                    }
+                }
             }
         }
     }
