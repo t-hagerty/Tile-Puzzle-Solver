@@ -225,6 +225,14 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void editButton_Click(object sender, RoutedEventArgs e)
         {
+            if(ProgramGrid.RowDefinitions[1].Height != new GridLength(0))
+            {
+                ProgramGrid.RowDefinitions[1].Height = new GridLength(0);
+            }
+            else
+            {
+                ProgramGrid.RowDefinitions[1].Height = new GridLength(100);
+            }
             Red_Button.IsEnabled = !Red_Button.IsEnabled;
             Orange_Button.IsEnabled = !Orange_Button.IsEnabled;
             Yellow_Button.IsEnabled = !Yellow_Button.IsEnabled;
