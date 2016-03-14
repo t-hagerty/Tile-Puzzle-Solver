@@ -53,6 +53,7 @@ namespace TilePuzzleSolver
         /// <param name="newCols">The new amount of columns o the puzzle</param>
         public void resizeTileGrid(int newRows, int newCols)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             removeGraph();
 
             if (newCols == puzzleColumns)
@@ -143,6 +144,8 @@ namespace TilePuzzleSolver
                     TilePuzzle_UniformGrid.Children.Add(endSideButton);
                 }
             }
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -225,7 +228,7 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void editButton_Click(object sender, RoutedEventArgs e)
         {
-            if(ProgramGrid.RowDefinitions[1].Height != new GridLength(0))
+            if (ProgramGrid.RowDefinitions[1].Height != new GridLength(0))
             {
                 ProgramGrid.RowDefinitions[1].Height = new GridLength(0);
             }
@@ -288,6 +291,7 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void solveButton_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             if (isEditMode)
             {
                 editButton_Click(sender, e);
@@ -355,7 +359,8 @@ namespace TilePuzzleSolver
 
                 currentStep = currentStep.parent;
             }
-            
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -365,7 +370,9 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void graphButton_Click(object sender, RoutedEventArgs e)
         {
-            if(isEditMode)
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            if (isEditMode)
             {
                 editButton_Click(sender, e);
             }
@@ -407,6 +414,8 @@ namespace TilePuzzleSolver
                     }
                 }
             }
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -496,6 +505,7 @@ namespace TilePuzzleSolver
         /// <param name="e"></param>
         private void randomizeButton_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             removeGraph();
             Random rng = new Random();
 
@@ -540,6 +550,7 @@ namespace TilePuzzleSolver
                     }
                 }
             }
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>

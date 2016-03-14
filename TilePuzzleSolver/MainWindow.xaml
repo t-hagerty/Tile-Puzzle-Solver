@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TilePuzzleSolver"
         mc:Ignorable="d"
-        Title="Tile Puzzle Solver" Width="800" Height="600">
+        Title="Tile Puzzle Solver" Width="800" Height="600" MinWidth="775" MinHeight="500">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" x:Key="SideBarButton">
             <Setter Property="Background" Value="#FF302F2F"/>
@@ -27,16 +27,13 @@
     </Window.Resources>
     <Grid x:Name="ProgramGrid" Background="#FF302F2F">
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition MinHeight="360"/>
             <RowDefinition Height="0"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="650"/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="Size" Content="SIZE:" HorizontalAlignment="Left" Margin="-185,324,0,0" VerticalAlignment="Top" Height="41" Width="82" FontSize="26.667"/>
-        <Label x:Name="AvoidGreenTiles" Content="AVOID GREEN TILES?" HorizontalAlignment="Left" Margin="-464,0,0,222" VerticalAlignment="Bottom" Height="41" Width="258" FontSize="26.667"/>
-        <CheckBox x:Name="AvoidGreen_CheckBox" Content="" HorizontalAlignment="Left" Margin="-185,229,0,0" VerticalAlignment="Top" Height="35" Width="107" Click="avoidGreen_Clicked"/>
         <Grid HorizontalAlignment="Left" Width="100" Background="#FF302F2F">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -62,18 +59,20 @@
             </ScrollViewer>
         </Grid>
         <Grid x:Name="Edit_Grid" Grid.Column="1" HorizontalAlignment="Left" Height="100" Grid.Row="1" VerticalAlignment="Top" Width="692">
-            <Button x:Name="Red_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="10,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFF72015" Click="redButton_Click" IsEnabled="False" RenderTransformOrigin="0.492,0.492"/>
-            <Button x:Name="Orange_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="81,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFF98626" Click="orangeButton_Click" IsEnabled="False"/>
-            <Button x:Name="Yellow_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="152,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFFFF637" Click="yellowButton_Click" IsEnabled="False"/>
-            <Button x:Name="Green_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="223,10,0,0" VerticalAlignment="Top" Width="66" Background="#FF6EFF37" Click="greenButton_Click" IsEnabled="False"/>
-            <Button x:Name="Blue_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="294,10,0,0" VerticalAlignment="Top" Width="66" Background="#FF48028F" Click="blueButton_Click" IsEnabled="False"/>
-            <Button x:Name="Purple_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="365,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFC303C3" Click="purpleButton_Click" IsEnabled="False"/>
-            <Button x:Name="Resize_Button" Content="RESIZE" HorizontalAlignment="Left" Margin="612,53,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="ResizeButton_Click" RenderTransformOrigin="0.486,0.543"/>
-            <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="28" Margin="553,12,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
-            <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="29" Margin="632,12,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
-            <Label x:Name="x" Content="X" HorizontalAlignment="Left" Margin="608,8,0,0" VerticalAlignment="Top" Height="50" Width="39" FontSize="18.667" Foreground="White"/>
-            <Button x:Name="Pink_Button" Content="" HorizontalAlignment="Left" Height="66" Margin="436,10,0,0" VerticalAlignment="Top" Width="66" Background="#FFFF6CEB" Click="pinkButton_Click" IsEnabled="False"/>
-            <Button x:Name="Randomize_Button" Content="RANDOMIZE" HorizontalAlignment="Left" Height="23" Margin="533,59,0,0" VerticalAlignment="Top" Width="70" Click="randomizeButton_Click"/>
+            <Button x:Name="Red_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="10,10,0,0" VerticalAlignment="Top" Width="50" Background="#FFF72015" Click="redButton_Click" IsEnabled="False" RenderTransformOrigin="0.492,0.492"/>
+            <Button x:Name="Orange_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="65,10,0,0" VerticalAlignment="Top" Width="50" Background="#FFF98626" Click="orangeButton_Click" IsEnabled="False"/>
+            <Button x:Name="Yellow_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="120,10,0,0" VerticalAlignment="Top" Width="50" Background="#FFFFF637" Click="yellowButton_Click" IsEnabled="False"/>
+            <Button x:Name="Green_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="175,10,0,0" VerticalAlignment="Top" Width="50" Background="#FF6EFF37" Click="greenButton_Click" IsEnabled="False"/>
+            <Button x:Name="Blue_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="230,10,0,0" VerticalAlignment="Top" Width="50" Background="#FF48028F" Click="blueButton_Click" IsEnabled="False"/>
+            <Button x:Name="Purple_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="285,10,0,0" VerticalAlignment="Top" Width="50" Background="#FFC303C3" Click="purpleButton_Click" IsEnabled="False"/>
+            <Button x:Name="Resize_Button" Content="RESIZE" HorizontalAlignment="Left" Margin="549,18,0,0" VerticalAlignment="Top" Height="35" Width="70" Click="ResizeButton_Click" RenderTransformOrigin="0.486,0.543"/>
+            <TextBox x:Name="Row_TextBox" HorizontalAlignment="Left" Height="28" Margin="409,21,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
+            <TextBox x:Name="Column_TextBox" HorizontalAlignment="Left" Height="28" Margin="485,21,0,0" TextWrapping="Wrap" Text="39" VerticalAlignment="Top" Width="50" FontSize="18.667" TextAlignment="Center"/>
+            <Label x:Name="x" Content="X" HorizontalAlignment="Left" Margin="461,17,0,0" VerticalAlignment="Top" Height="50" Width="39" FontSize="18.667" Foreground="White"/>
+            <Button x:Name="Pink_Button" Content="" HorizontalAlignment="Left" Height="50" Margin="340,10,0,0" VerticalAlignment="Top" Width="50" Background="#FFFF6CEB" Click="pinkButton_Click" IsEnabled="False"/>
+            <Button x:Name="Randomize_Button" Content="RANDOMIZE" HorizontalAlignment="Left" Height="25" Margin="10,67,0,0" VerticalAlignment="Top" Width="78" Click="randomizeButton_Click" IsEnabled="False"/>
+            <Label x:Name="AvoidGreenTiles" Content="AVOID GREEN TILES?" HorizontalAlignment="Left" Margin="405,0,0,1" VerticalAlignment="Bottom" Height="41" Width="186" FontSize="18.667" Foreground="White"/>
+            <CheckBox x:Name="AvoidGreen_CheckBox" Content="" HorizontalAlignment="Left" Margin="602,69,0,0" VerticalAlignment="Top" Height="15" Width="16" Click="avoidGreen_Clicked"/>
         </Grid>
     </Grid>
 </Window>
