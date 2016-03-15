@@ -50,6 +50,17 @@ namespace TilePuzzleSolver
         private int rows;
         private int cols;
 
+        public int Rows
+        {
+            get { return rows; }
+            set { }
+        }
+        public int Cols
+        {
+            get { return cols; }
+            set { }
+        }
+
         /// <summary>
         /// Constructor for a color tile puzzle with input for both number of rows and colors, and specifying the colors of each tile from
         /// the beginning using an input 2D Array of ints.

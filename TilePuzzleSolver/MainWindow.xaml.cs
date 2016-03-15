@@ -64,16 +64,24 @@ namespace TilePuzzleSolver
                 }
                 else if(newRows > puzzleRows) //If only new rows are being added, we can resize without clearing TilePuzzle_UniformGrid, saving time.
                 {
-                    TilePuzzle_UniformGrid.Rows = newRows;
                     tilePuzzle.resizePuzzle(newRows, puzzleColumns);
-                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                    if (tilePuzzle.Rows != newRows)
+                    {
+                        MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
+                        tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                        Mouse.OverrideCursor = null;
+                        Row_TextBox.Text = puzzleRows.ToString();
+                        return;
+                    }
+                    TilePuzzle_UniformGrid.Rows = newRows;
+                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25.0;
                     TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
 
                     for(int r = puzzleRows; r < newRows; r++)
                     {
                         Button startSideButton = new Button();
-                        startSideButton.Background = new SolidColorBrush(Colors.Gray);
-                        startSideButton.IsEnabled = false;
+                        startSideButton.Background = new SolidColorBrush(Colors.DarkGray);
+                        startSideButton.IsEnabled = true;
                         startSideButton.BorderThickness = new Thickness(0);
                         TilePuzzle_UniformGrid.Children.Add(startSideButton);
 
@@ -86,8 +94,8 @@ namespace TilePuzzleSolver
                             TilePuzzle_UniformGrid.Children.Add(aButton);
                         }
                         Button endSideButton = new Button();
-                        endSideButton.Background = new SolidColorBrush(Colors.Gray);
-                        endSideButton.IsEnabled = false;
+                        endSideButton.Background = new SolidColorBrush(Colors.DarkGray);
+                        endSideButton.IsEnabled = true;
                         endSideButton.BorderThickness = new Thickness(0);
                         TilePuzzle_UniformGrid.Children.Add(endSideButton);
                     }
@@ -95,9 +103,17 @@ namespace TilePuzzleSolver
                 }
                 else //If only removing rows, we can cut them off the end of the collection of TilePuzzle_UniformGrid's children without having to rebuild.
                 {
-                    TilePuzzle_UniformGrid.Rows = newRows;
                     tilePuzzle.resizePuzzle(newRows, puzzleColumns);
-                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                    if (tilePuzzle.Rows != newRows)
+                    {
+                        MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
+                        tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                        Mouse.OverrideCursor = null;
+                        Row_TextBox.Text = puzzleRows.ToString();
+                        return;
+                    }
+                    TilePuzzle_UniformGrid.Rows = newRows;
+                    TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25.0;
                     TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
                     TilePuzzle_UniformGrid.Children.RemoveRange(newRows * (puzzleColumns + 2), TilePuzzle_UniformGrid.Children.Count - (newRows * (puzzleColumns + 2)));
                     puzzleRows = newRows;
@@ -105,22 +121,31 @@ namespace TilePuzzleSolver
             }
             else
             {
+                tilePuzzle.resizePuzzle(newRows, newCols);
+                if (tilePuzzle.Rows != newRows || tilePuzzle.Cols != newCols)
+                {
+                    MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
+                    tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                    Mouse.OverrideCursor = null;
+                    Row_TextBox.Text = puzzleRows.ToString();
+                    Column_TextBox.Text = puzzleColumns.ToString();
+                    return;
+                }
                 TilePuzzle_UniformGrid.Children.Clear();
                 puzzleColumns = newCols;
                 puzzleRows = newRows;
                 TilePuzzle_UniformGrid.Columns = puzzleColumns + 2;
                 TilePuzzle_UniformGrid.Rows = puzzleRows;
-                tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
-                TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns) * 25;
-                TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25;
+                TilePuzzle_UniformGrid.Width = (TilePuzzle_UniformGrid.Columns) * 25.0;
+                TilePuzzle_UniformGrid.Height = TilePuzzle_UniformGrid.Rows * 25.0;
                 TilePuzzleContainer_Grid.Width = TilePuzzle_UniformGrid.Width;
                 TilePuzzleContainer_Grid.Height = TilePuzzle_UniformGrid.Height;
 
                 for (int r = 0; r < puzzleRows; r++)
                 {
                     Button startSideButton = new Button();
-                    startSideButton.Background = new SolidColorBrush(Colors.Gray);
-                    startSideButton.IsEnabled = false;
+                    startSideButton.Background = new SolidColorBrush(Colors.DarkGray);
+                    startSideButton.IsEnabled = true;
                     startSideButton.BorderThickness = new Thickness(0);
                     TilePuzzle_UniformGrid.Children.Add(startSideButton);
 
@@ -138,8 +163,8 @@ namespace TilePuzzleSolver
                     }
 
                     Button endSideButton = new Button();
-                    endSideButton.Background = new SolidColorBrush(Colors.Gray);
-                    endSideButton.IsEnabled = false;
+                    endSideButton.Background = new SolidColorBrush(Colors.DarkGray);
+                    endSideButton.IsEnabled = true;
                     endSideButton.BorderThickness = new Thickness(0);
                     TilePuzzle_UniformGrid.Children.Add(endSideButton);
                 }
@@ -285,7 +310,8 @@ namespace TilePuzzleSolver
         }
 
         /// <summary>
-        /// 
+        /// Runs the pathfinding algorithm on the current puzzle and then deciphers the returned information to draw
+        /// a path onto the puzzle for the user to see.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -608,6 +634,11 @@ namespace TilePuzzleSolver
             }
         }
 
+        /// <summary>
+        /// Adds/removes extra weight to green tiles if the checkBox is checked/unchecked, respectively.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void avoidGreen_Clicked(object sender, RoutedEventArgs e)
         {
             removeGraph();
