@@ -67,8 +67,9 @@ namespace TilePuzzleSolver
                     tilePuzzle.resizePuzzle(newRows, puzzleColumns);
                     if (tilePuzzle.Rows != newRows)
                     {
+                        //If the new size is too large, resizePuzzle reverts tilePuzzle.Rows/Cols to the old size, so they won't match up to newRows, newCols
+                        //Handle informing the user the puzzle size is too large for memory, return everything to old puzzle.
                         MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
-                        tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
                         Mouse.OverrideCursor = null;
                         Row_TextBox.Text = puzzleRows.ToString();
                         return;
@@ -106,8 +107,10 @@ namespace TilePuzzleSolver
                     tilePuzzle.resizePuzzle(newRows, puzzleColumns);
                     if (tilePuzzle.Rows != newRows)
                     {
+                        //If the new size is too large, resizePuzzle reverts tilePuzzle.Rows/Cols to the old size, so they won't match up to newRows, newCols
+                        //Handle informing the user the puzzle size is too large for memory, return everything to old puzzle.
                         MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
-                        tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                        //tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
                         Mouse.OverrideCursor = null;
                         Row_TextBox.Text = puzzleRows.ToString();
                         return;
@@ -124,8 +127,10 @@ namespace TilePuzzleSolver
                 tilePuzzle.resizePuzzle(newRows, newCols);
                 if (tilePuzzle.Rows != newRows || tilePuzzle.Cols != newCols)
                 {
+                    //If the new size is too large, resizePuzzle reverts tilePuzzle.Rows/Cols to the old size, so they won't match up to newRows, newCols
+                    //Handle informing the user the puzzle size is too large for memory, return everything to old puzzle.
                     MessageBox.Show("Error: Out of memory! Try a smaller puzzle");
-                    tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
+                    //tilePuzzle.resizePuzzle(puzzleRows, puzzleColumns);
                     Mouse.OverrideCursor = null;
                     Row_TextBox.Text = puzzleRows.ToString();
                     Column_TextBox.Text = puzzleColumns.ToString();
