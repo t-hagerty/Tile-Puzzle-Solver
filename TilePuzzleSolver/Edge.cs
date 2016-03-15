@@ -25,7 +25,7 @@ namespace TilePuzzleSolver
         /// <param name="child">The node that the edge goes to.</param>
         /// <param name="scentType">The scent that crossing this edge will give a player, if any. Input "Orange" or "orange" or "O" or "o" for orange scent,
         /// "Lemon" or "lemon" or "L" or "l" for lemon scent, or anything else for no scent.</param>
-        public Edge(int rowOfParent, int colOfParent, int rowOfChild, int colOfChild, Node child, String scentType)
+        public Edge(Node child, String scentType)
         {
             childNode = child;
 

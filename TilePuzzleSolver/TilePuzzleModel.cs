@@ -44,7 +44,7 @@ namespace TilePuzzleSolver
 
             If we wanted the player to start on a specific tile wthin the puzzle, we could set startNode = nodes[r,c], where r, c = the row/column (same for
             endNode) and make some minor modifications to the code (specifically, the code in buildGraph() that deals with adding edges for the two arbitrary
-            start/endNodes).
+            start/endNodes). We would also have to alter the path-finding algorithm, specifically, the heuristic method used.
         */
 
         private int rows;
@@ -143,8 +143,16 @@ namespace TilePuzzleSolver
         }
 
         /// <summary>
+        /// Finds a path through the puzzle originating from startNode and ending at endNode, going across from left to right.
+        /// Based on A* pathfinding algorithm, it theoretically is supposed to find the shortest possible path, but this is thus far untested/unproven.
+        /// 
+        /// First uses buildGraph to determine all possible and relevant edges between each tile/node, then uses a mostly standard A* algorithm, until
+        /// an orange tile is encountered and the rules change (because of "scents"). Every time an orange tile is encountered, a nested A*-based loop (referred to as the "orange loop")
+        /// is ran (but with orange-scented rules) which essentially starts at the orange tile and seeks any tile that will remove the orange scent, or the endNode.
+        /// Every tile encountered that exits the orange loop is added to the main open set (the open set of the normal A* loop) with their cost to get there through the orange loop.
         /// 
         /// </summary>
+        /// <returns>Returns a list of all possible paths to the endNode, and the shortest one, or the one with the least tree height, is to be considered the answer</returns>
         public List<PathTreeNode> solve()
         {
             resetGraphEdges();
@@ -343,6 +351,12 @@ namespace TilePuzzleSolver
             return Leaves;
         }
 
+        /// <summary>
+        /// Heuristic function used by the pathfinding algorithm. Determines distance to the right side, assuming no obstacles (as if there was a straight
+        /// pink tile path from current position to the end). Must never overestimate or the pathfinding algorithm might not return shortest path.
+        /// </summary>
+        /// <param name="col">The column of the current position.</param>
+        /// <returns></returns>
         private int heuristic(int col)
         {
             return cols - 1 - col;
@@ -376,7 +390,7 @@ namespace TilePuzzleSolver
 
             for (int r = 0; r < rows; r++)
             {
-                nodes[r, cols - 1].edges.Add(new Edge(r, cols - 1, r, cols, endNode, "")); 
+                nodes[r, cols - 1].edges.Add(new Edge(endNode, "")); 
                 /*
                 Even if this node shouldnt connect to end, i.e. if node is red, the edge is still added, but in any of these cases, the node is 
                 inaccessible otherwise, so it doesn't matter.
@@ -575,7 +589,7 @@ namespace TilePuzzleSolver
                     break;
                 case 1:
                     //Orange tiles have normal movement rules. addEdge method will add appropriate scent info to the edge.
-                    addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false); //Add edge TO this orange tile.
+                    addEdge(nodeBeingChecked, adjacentNode, false); //Add edge TO this orange tile.
                     if (nodeBeingChecked.color == 5)
                     //If nodeBeingChecked is purple, check if the node on the side of it opposite of this orange tile is red, or the puzzle's bounds, otherwise
                     //no edge should be made to go back to nodeBeingChecked.
@@ -586,12 +600,12 @@ namespace TilePuzzleSolver
                         }
                         if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
                         {
-                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            addEdge(adjacentNode, endNode, true);
                             break;
                         }
                         if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            addEdge(adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
@@ -601,7 +615,7 @@ namespace TilePuzzleSolver
                     else
                     {
                         //nodeBeingChecked has no sliding involved, so we can make an edge going back from adjacentNode to it.
-                        addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                        addEdge(adjacentNode, nodeBeingChecked, false);
                     }
                     break;
                 case 2:
@@ -609,7 +623,7 @@ namespace TilePuzzleSolver
                     break;
                 case 3:
                     //Green tile, normal movement rules
-                    addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
+                    addEdge(nodeBeingChecked, adjacentNode, false);
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
@@ -619,12 +633,12 @@ namespace TilePuzzleSolver
                         }
                         if((row - dy >= 0 || row - dy < rows) && col - dx == cols)
                         {
-                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            addEdge(adjacentNode, endNode, true);
                             break;
                         }
                         if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            addEdge(adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
@@ -633,7 +647,7 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                        addEdge(adjacentNode, nodeBeingChecked, false);
                     }
                     break;
                 case 4:
@@ -643,7 +657,7 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
+                        addEdge(nodeBeingChecked, adjacentNode, false);
                         if (nodeBeingChecked.color == 5)
                         //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                         {
@@ -653,12 +667,12 @@ namespace TilePuzzleSolver
                             }
                             if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
                             {
-                                addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                                addEdge(adjacentNode, endNode, true);
                                 break;
                             }
                             if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                             {
-                                addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                                addEdge(adjacentNode, nodeBeingChecked, true);
                             }
                             else
                             {
@@ -667,7 +681,7 @@ namespace TilePuzzleSolver
                         }
                         else
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                            addEdge(adjacentNode, nodeBeingChecked, false);
                         }
                         break;
                     }
@@ -696,7 +710,7 @@ namespace TilePuzzleSolver
                     if(col + slideDX == cols && adjacentNode.color == 5)
                     {
                         //If while loop stopped against the right puzzle bound && the last tile before the bound was purple, it should slide into the endNode side.
-                        addEdge(row, col, row, cols, nodeBeingChecked, endNode, true);
+                        addEdge(nodeBeingChecked, endNode, true);
                         break;
                     }
 
@@ -709,7 +723,7 @@ namespace TilePuzzleSolver
                         Node dummyNode = new Node(6, adjacentNode.row, adjacentNode.col);
                         int dummyRow = row + slideDY - dy;
                         int dummyCol = col + slideDX - dx;
-                        addEdge(row, col, dummyRow, dummyCol, nodeBeingChecked, dummyNode, true);
+                        addEdge(nodeBeingChecked, dummyNode, true);
                         if(nodeBeingChecked.color == 5)
                             //If the node we started from in sliding into a yellow tile was purple, we might not be sent back to that node, check to see where we slide back to.
                         {
@@ -737,32 +751,32 @@ namespace TilePuzzleSolver
                                 break;
                             }
 
-                            addEdge(dummyRow, dummyCol, row + slideDY, col + slideDX, dummyNode, nodes[row + slideDY, col + slideDX], true);
+                            addEdge(dummyNode, nodes[row + slideDY, col + slideDX], true);
                         }
                         else
                         {
-                            addEdge(dummyRow, dummyCol, row, col, dummyNode, nodeBeingChecked, true);
+                            addEdge(dummyNode, nodeBeingChecked, true);
                         }
                     }
                     else
                     {
-                        addEdge(row, col, row + slideDY - dy, col + slideDX - dx, nodeBeingChecked, adjacentNode, true); //from nodeBeingChecked to adjacentNode at the end of purple slide
+                        addEdge(nodeBeingChecked, adjacentNode, true); //from nodeBeingChecked to adjacentNode at the end of purple slide
                         //Need to check if nodeBeingChecked is purple or not (some situations where the player could end up on purple)
                         if (nodeBeingChecked.color != 5)
                         {
-                            addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            addEdge(adjacentNode, nodeBeingChecked, true);
                         }
                         else if((row - dy < 0 || row - dy >= rows || col - dx < 0 || col - dx >= cols) || nodes[row - dy, col - dx].color == 0)
                             //If node next to nodeBeingChecked in opposite direction is red or is a tile bound
                             //(because nodeBeingChecked is purple, need to see if we can go back to it from adjacentNode.
                         {
-                            addEdge(row + slideDY - dy, col + slideDX - dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            addEdge(adjacentNode, nodeBeingChecked, true);
                         }
                     }
                     break;
                 case 6:
                     //Pink tile, normal movement rules
-                    addEdge(row, col, row + dy, col + dx, nodeBeingChecked, adjacentNode, false);
+                    addEdge(nodeBeingChecked, adjacentNode, false);
                     if (nodeBeingChecked.color == 5)
                     //Same explanation as case 1, if nodeBeingChecked is purple, must check if we can actually go to it from adjacentNode
                     {
@@ -772,12 +786,12 @@ namespace TilePuzzleSolver
                         }
                         if ((row - dy >= 0 || row - dy < rows) && col - dx == cols)
                         {
-                            addEdge(row + dy, col + dx, row - dy, cols, adjacentNode, endNode, true);
+                            addEdge(adjacentNode, endNode, true);
                             break;
                         }
                         if (row - dy < 0 || row - dy >= rows || nodes[row - dy, col - dx].color == 0)
                         {
-                            addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, true);
+                            addEdge(adjacentNode, nodeBeingChecked, true);
                         }
                         else
                         {
@@ -786,7 +800,7 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        addEdge(row + dy, col + dx, row, col, adjacentNode, nodeBeingChecked, false);
+                        addEdge(adjacentNode, nodeBeingChecked, false);
                     }
                     break;
                 default:
@@ -797,18 +811,14 @@ namespace TilePuzzleSolver
         /// <summary>
         /// Adds a directional edge in between two nodes. Handles applying scents to an edge when appropriate.
         /// </summary>
-        /// <param name="rowFrom">The row of the node that the edge starts from</param>
-        /// <param name="colFrom">The olumn of the node that the edge starts from</param>
-        /// <param name="rowTo">The row of the node that the edge goes to</param>
-        /// <param name="colTo">The column of the node that the edge goes to</param>
         /// <param name="edgeGoesFrom">The node that the edge starts from</param>
         /// <param name="edgeGoesTo">The node that the edge goes to</param>
         /// <param name="goesOverPurple">True if in the checking for edges process, we've gone over a purple tile. False otherwise.</param>
-        private void addEdge(int rowFrom, int colFrom, int rowTo, int colTo, Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
+        private void addEdge(Node edgeGoesFrom, Node edgeGoesTo, bool goesOverPurple)
         {
             //Extra catch in edge-making in case of bugs: make sure neither node involved is an inaccessible tile
-            if(edgeGoesFrom.color == 0 || edgeGoesFrom.color == 2 || (edgeGoesFrom.color == 4 && isWaterElectrified(rowFrom, colFrom)) ||
-                edgeGoesTo.color == 0 || edgeGoesTo.color == 2 || (edgeGoesTo.color == 4 && isWaterElectrified(rowTo, colTo)))
+            if(edgeGoesFrom.color == 0 || edgeGoesFrom.color == 2 || (edgeGoesFrom.color == 4 && isWaterElectrified(edgeGoesFrom.row, edgeGoesFrom.col)) ||
+                edgeGoesTo.color == 0 || edgeGoesTo.color == 2 || (edgeGoesTo.color == 4 && isWaterElectrified(edgeGoesTo.row, edgeGoesTo.col)))
             {
                 return;
             }
@@ -816,17 +826,17 @@ namespace TilePuzzleSolver
             if(edgeGoesTo.color == 1)
             {
                 //Edge goes to an orange tile, so it will give the orange scent
-                edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, "orange"));
+                edgeGoesFrom.edges.Add(new Edge(edgeGoesTo, "orange"));
             }
             else if(goesOverPurple)
             {
                 //Doesn't go to an orange tile and goes over purple, gives lemon scent
-                edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, "lemon"));
+                edgeGoesFrom.edges.Add(new Edge(edgeGoesTo, "lemon"));
             }
             else
             {
                 //Normal unscented edge.
-                edgeGoesFrom.edges.Add(new Edge(rowFrom, colFrom, rowTo, colTo, edgeGoesTo, ""));
+                edgeGoesFrom.edges.Add(new Edge(edgeGoesTo, ""));
             }
         }
 
