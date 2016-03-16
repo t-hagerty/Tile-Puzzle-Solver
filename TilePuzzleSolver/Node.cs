@@ -32,7 +32,7 @@ namespace TilePuzzleSolver
         public Node()
         {
             color = 6;
-            edges = new List<Edge>(4);
+            edges = new List<Edge>(4); //Most nodes won't have more than 4 edges, save on memory
             weight = 0;
         }
 

@@ -159,7 +159,6 @@ namespace TilePuzzleSolver
             buildGraph();
 
             //A*-based pathfinding algorithm
-            bool isPlayerOrangeScented = false; //false = either no scent, or lemon scented (equivalent)
             List<Node> closedSet = new List<Node>();
             SimplePriorityQueue<Node> openSet = new SimplePriorityQueue<Node>();
             List<Node> closedOrangeSet = new List<Node>();
@@ -211,11 +210,6 @@ namespace TilePuzzleSolver
 
                 if(current.color == 1)
                 {
-                    isPlayerOrangeScented = true;
-                }
-
-                if(isPlayerOrangeScented)
-                {
                     openOrangeSet = new SimplePriorityQueue<Node>();
                     openOrangeSet.Enqueue(current, current.f);
                     currentStep.isOrangeStep = true;
@@ -254,11 +248,7 @@ namespace TilePuzzleSolver
                             {
                                 continue;
                             }
-                            if (currentOrange.col == -1)
-                            {
-                                currentOrange.row = toOrangeNeighbor.childNode.row;
-                            }
-                            else if (toOrangeNeighbor.childNode.col == cols)
+                            if (toOrangeNeighbor.childNode.col == cols)
                             {
                                 toOrangeNeighbor.childNode.row = currentOrange.row;
                             }
@@ -305,7 +295,6 @@ namespace TilePuzzleSolver
                     Predicate<PathTreeNode> isOrangeStepLeaf = aStep => aStep.isOrangeStep;
                     Leaves.RemoveAll(isOrangeStepLeaf);
 
-                    isPlayerOrangeScented = false;
                     closedSet.Add(current);
                 }
                 else
@@ -535,6 +524,7 @@ namespace TilePuzzleSolver
                     *from going to this purple, and any tile the dummy node would send them to is already accessible from the purple tile.
                     */
 
+                    // TODO - comment says don't need to worry about checking for electric tiles next to this purple tile, but we check anyways- do we or not?
                     if ((((row + 1 < rows && nodes[row + 1, col].color == 0) || row + 1 == rows) && 
                         (row - 1 >= 0 && !(nodes[row - 1, col].color == 0 || nodes[row - 1, col].color == 2 || (nodes[row - 1, col].color == 4 && isWaterElectrified(row - 1, col)))))
                         || (((row - 1 >= 0 && nodes[row - 1, col].color == 0) || row - 1 == -1) && 
