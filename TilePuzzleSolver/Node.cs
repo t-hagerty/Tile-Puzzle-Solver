@@ -21,9 +21,7 @@ namespace TilePuzzleSolver
         public int weight;
         public int row;
         public int col;
-
         public int color = -1; //0 represents red, 1 orange, 2 yellow, 3 green, 4 blue, 5 purple, 6 pink.
-        
         public List<Edge> edges;
         
         /// <summary>

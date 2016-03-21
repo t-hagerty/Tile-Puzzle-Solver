@@ -46,7 +46,6 @@ namespace TilePuzzleSolver
             endNode) and make some minor modifications to the code (specifically, the code in buildGraph() that deals with adding edges for the two arbitrary
             start/endNodes). We would also have to alter the path-finding algorithm, specifically, the heuristic method used.
         */
-
         private int rows;
         private int cols;
 
@@ -524,7 +523,6 @@ namespace TilePuzzleSolver
                     *from going to this purple, and any tile the dummy node would send them to is already accessible from the purple tile.
                     */
 
-                    // TODO - comment says don't need to worry about checking for electric tiles next to this purple tile, but we check anyways- do we or not?
                     if ((((row + 1 < rows && nodes[row + 1, col].color == 0) || row + 1 == rows) && 
                         (row - 1 >= 0 && !(nodes[row - 1, col].color == 0 || nodes[row - 1, col].color == 2 || (nodes[row - 1, col].color == 4 && isWaterElectrified(row - 1, col)))))
                         || (((row - 1 >= 0 && nodes[row - 1, col].color == 0) || row - 1 == -1) && 

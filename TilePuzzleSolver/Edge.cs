@@ -15,7 +15,6 @@ namespace TilePuzzleSolver
     class Edge
     {
         public Node childNode;
-
         public bool isScented = false;
         public bool isOrangeScented = false;
 
