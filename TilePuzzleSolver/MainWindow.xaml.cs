@@ -664,6 +664,17 @@ namespace TilePuzzleSolver
                 }
             }
         }
+
+        /// <summary>
+        /// Pops up a window explaining the program/how to use it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void helpButton_Click(object sender, RoutedEventArgs e)
+        {
+            HelpWindow hw = new HelpWindow();
+            hw.Show();
+        }
     }
 
 }

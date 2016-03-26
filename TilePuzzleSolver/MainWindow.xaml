@@ -41,9 +41,10 @@
             <Button x:Name="Save_Button" Content="SAVE" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" Width="100" Click="SaveButton_Click" Foreground="White" BorderThickness="0"/>
             <Button x:Name="Load_Button" Content="LOAD" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,40,0,0" VerticalAlignment="Top" Height="40" Width="100" Click="LoadButton_Click" Foreground="White" BorderThickness="0"/>
             <Button x:Name="Edit_Button" Content="EDIT" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Height="40" Margin="0,80,0,0" VerticalAlignment="Top" Width="100" Click="editButton_Click" Foreground="White" BorderThickness="0"/>
-            <Button x:Name="Debug_Button" Content="DEBUG" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,200,0,0" VerticalAlignment="Top" Height="40" Width="100" Click="DebugButton_Click" BorderThickness="0" Foreground="White"/>
+            <Button x:Name="Debug_Button" Content="DEBUG" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,240,0,0" VerticalAlignment="Top" Height="40" Width="100" Click="DebugButton_Click" BorderThickness="0" Foreground="White" IsEnabled="False" Visibility="Hidden"/>
             <Button x:Name="Solve_Button" Content="SOLVE" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,160,0,0" Width="100" Click="solveButton_Click" VerticalAlignment="Top" Height="40" Foreground="White" BorderThickness="0"/>
-            <Button x:Name="ShowGraph" Content="GRAPH" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,120,0,0" Width="100" Click="graphButton_Click" VerticalAlignment="Top" Height="40" Foreground="White" BorderThickness="0"/>
+            <Button x:Name="ShowGraph_Button" Content="GRAPH" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,120,0,0" Width="100" Click="graphButton_Click" VerticalAlignment="Top" Height="40" Foreground="White" BorderThickness="0"/>
+            <Button x:Name="Help_Button" Content="HELP" Style="{StaticResource SideBarButton}" HorizontalAlignment="Left" Margin="0,200,0,0" Width="100" Click="helpButton_Click" VerticalAlignment="Top" Height="40" Foreground="White" BorderThickness="0"/>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

@@ -1,0 +1,27 @@
+﻿<Window x:Class="TilePuzzleSolver.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TilePuzzleSolver"
+        mc:Ignorable="d"
+        Title="Help" Height="400" Width="500" ResizeMode="NoResize">
+    <Grid Margin="0,0,0,2">
+        <ScrollViewer HorizontalAlignment="Left" Height="363" VerticalAlignment="Top" Width="484">
+            <Grid Height="765" Width="470">
+                <Label x:Name="About_Label" Content="About" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="127" FontSize="18.667"/>
+                <Label x:Name="Rules_Label" Content="Puzzle Rules" HorizontalAlignment="Left" Margin="0,103,0,0" VerticalAlignment="Top" Height="37" Width="127" FontSize="18.667"/>
+                <TextBox x:Name="About_TextBox" HorizontalAlignment="Left" Height="65" Margin="10,38,0,0" TextWrapping="Wrap" Text="Tile Puzzle Solver was written by Tyler Hagerty as an exercise in writing path-finding algorithms for complex problems. With it, you are able to make your own puzzles based on a puzzle from the video game &quot;Undertale&quot;, and have the program attempt to find the shortest path from the left side to the right, if one exists." VerticalAlignment="Top" Width="450" BorderThickness="0" IsEnabled="False"/>
+                <TextBox x:Name="Rules_TextBox" HorizontalAlignment="Left" Height="597" Margin="45,143,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="410" BorderThickness="0" IsEnabled="False" Text="Red tiles are impassable, a player can never step onto a red space.&#xA;&#xA;Orange tiles can be moved onto normally (from above/below/left/right adjacent tiles). However, they also introduce the &quot;scent&quot; mechanic, the source of added complexity to our puzzle, as they make a player &quot;smell like oranges&quot; if the tile is stepped on.&#xA;&#xA;Yellow tiles are &quot;electricity tiles&quot;. Stepping onto one sends the player back in the direction they came from. As a result, a player can never end up standing on a yellow tile.&#xA;&#xA;Green tiles can be moved onto normally. However, the source of this puzzle provides incentive to avoid stepping on a green tile, so this program can be configured to avoid green tiles in its solutions. &#xA;&#xA;Blue tiles are &quot;water tiles&quot; and can be moved onto normally, unless they are either adjacent to a yellow tile (in which case the water is electrified) or the player has an orange scent from previously stepping on an orange tile (in which case, &quot;piranhas in the water will bite the player&quot;). In either of these cases, a blue tile will act like a yellow tile.&#xA;&#xA;Purple tiles are &quot;soap tiles&quot; which are slippery, forcing the player forward another tile in the direction they traveled (unless forced against a wall or the puzzle's edge, in which case they stop on the purple tile) and removing the orange scent, allowing them to again go through blue tiles. The sliding effect can stack, so if the next tile is also purple, the player would slide over that as well.&#xA;Note that if sliding into a yellow tile, the player will be forced back, sliding over the purple tile in the opposite direction.&#xA;&#xA;Pink tiles can be moved onto normally and have no special rules.&#xD;&#xA;&#xD;&#xA;For the purposes of this program, it is assumed that a player trying to solve the puzzle starts on a platform on the left side of the puzzle, from which they can enter the puzzle onto any accessible tile along the left side. The goal is to cross the puzzle and reach the right side, from any accessible tile along the puzzle's right side."/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,141,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FFF72015"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,174,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FFF98626"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,253,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FFFFF637"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,317,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FF6EFF37"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,382,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FF48028F"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,477,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FFC303C3"/>
+                <Rectangle HorizontalAlignment="Left" Height="25" Margin="10,619,0,0" Stroke="Black" VerticalAlignment="Top" Width="25" Fill="#FFFF6CEB"/>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</Window>

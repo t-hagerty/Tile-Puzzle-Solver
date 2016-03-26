@@ -21,7 +21,7 @@ namespace TilePuzzleSolver
         public int weight;
         public int row;
         public int col;
-        public int color = -1; //0 represents red, 1 orange, 2 yellow, 3 green, 4 blue, 5 purple, 6 pink.
+        public int color = -1; //0 represents red, 1 orange, 2 yellow, 3 green, 4 blue, 5 purple, 6 pink. Set to 7 in special case that this node is a dummy node
         public List<Edge> edges;
         
         /// <summary>
@@ -37,10 +37,10 @@ namespace TilePuzzleSolver
         /// <summary>
         /// Creates a new node with the specified color
         /// </summary>
-        /// <param name="tileType">The color of the new node. Should be an int from 0 - 6 (0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - blue, 5 - purple, 6 - pink)</param>
+        /// <param name="tileType">The color of the new node. Should be an int from 0 - 6 (0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - blue, 5 - purple, 6 - pink). 7 is reserved for a special case (dummy node)</param>
         public Node(int tileType, int r, int c)
         {
-            if(tileType < 0 || tileType > 6)
+            if(tileType < 0 || tileType > 7)
             {
                 tileType = 6;
             }
@@ -77,7 +77,17 @@ namespace TilePuzzleSolver
                     }
                     else
                     {
-                        edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
+                        if (anEdge.childNode.color == 7) //edge slides over purple tile(s) into yellow tile, which sends back (dummy node)
+                        {
+                            int returnRow = anEdge.childNode.edges[0].childNode.row;
+                            int returnCol = anEdge.childNode.edges[0].childNode.col;
+
+                            edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color 2 with lemon scent, which forces back to " + returnRow + ", " + returnCol + "\n";
+                        }
+                        else
+                        {
+                            edgeList = edgeList + "Edge to " + anEdge.childNode.row + ", " + anEdge.childNode.col + " to tile with color " + anEdge.childNode.color + " with lemon scent" + "\n";
+                        }
                     }
                 }
                 else

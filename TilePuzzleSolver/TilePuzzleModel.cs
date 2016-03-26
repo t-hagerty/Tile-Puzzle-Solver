@@ -708,7 +708,7 @@ namespace TilePuzzleSolver
                         //(If the purple slide ends in electricity, we make a dummy node (see explanation in case 2 of findEdgesForNode)
                         //unless the starting tile was orange, because then the move is pointless (dummy node move only useful to get
                         //rid of orange scent))
-                        Node dummyNode = new Node(6, adjacentNode.row, adjacentNode.col);
+                        Node dummyNode = new Node(7, adjacentNode.row, adjacentNode.col);
                         int dummyRow = row + slideDY - dy;
                         int dummyCol = col + slideDX - dx;
                         addEdge(nodeBeingChecked, dummyNode, true);
