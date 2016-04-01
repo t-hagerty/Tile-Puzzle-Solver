@@ -24,6 +24,7 @@ namespace TilePuzzleSolver
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool isGraphed = false;
         private bool isEditMode = false;
         private int selectedColor = 6;
         private int puzzleColumns;
@@ -246,7 +247,10 @@ namespace TilePuzzleSolver
             }
             else
             {
-                MessageBox.Show(tilePuzzle.nodes[row, col].edgesToString());
+                if (isGraphed)
+                {
+                    MessageBox.Show(tilePuzzle.nodes[row, col].edgesToString());
+                }
             }
         }
 
@@ -282,36 +286,75 @@ namespace TilePuzzleSolver
         private void redButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 0;
+            unselectColorButtons();
+            Red_Button.BorderThickness = new Thickness(4);
+            Red_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void orangeButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 1;
+            unselectColorButtons();
+            Orange_Button.BorderThickness = new Thickness(4);
+            Orange_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void yellowButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 2;
+            unselectColorButtons();
+            Yellow_Button.BorderThickness = new Thickness(4);
+            Yellow_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void greenButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 3;
+            unselectColorButtons();
+            Green_Button.BorderThickness = new Thickness(4);
+            Green_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void blueButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 4;
+            unselectColorButtons();
+            Blue_Button.BorderThickness = new Thickness(4);
+            Blue_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void purpleButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 5;
+            unselectColorButtons();
+            Purple_Button.BorderThickness = new Thickness(4);
+            Purple_Button.BorderBrush = new SolidColorBrush(Colors.White);
         }
 
         private void pinkButton_Click(object sender, RoutedEventArgs e)
         {
             selectedColor = 6;
+            unselectColorButtons();
+            Pink_Button.BorderThickness = new Thickness(4);
+            Pink_Button.BorderBrush = new SolidColorBrush(Colors.White);
+        }
+
+        private void unselectColorButtons()
+        {
+            Red_Button.BorderThickness = new Thickness(1);
+            Red_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Orange_Button.BorderThickness = new Thickness(1);
+            Orange_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Yellow_Button.BorderThickness = new Thickness(1);
+            Yellow_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Green_Button.BorderThickness = new Thickness(1);
+            Green_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Blue_Button.BorderThickness = new Thickness(1);
+            Blue_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Purple_Button.BorderThickness = new Thickness(1);
+            Purple_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
+            Pink_Button.BorderThickness = new Thickness(1);
+            Pink_Button.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF707070"));
         }
 
         /// <summary>
@@ -410,6 +453,7 @@ namespace TilePuzzleSolver
             removeGraph();
 
             tilePuzzle.buildGraph();
+            isGraphed = true;
 
             Canvas graph = new Canvas();
             graph.Width = TilePuzzleContainer_Grid.Width;
@@ -527,6 +571,7 @@ namespace TilePuzzleSolver
             }
 
             tilePuzzle.resetGraphEdges();
+            isGraphed = false;
         }
 
         /// <summary>

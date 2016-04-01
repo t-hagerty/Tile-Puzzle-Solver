@@ -96,6 +96,11 @@ namespace TilePuzzleSolver
                 }
             }
 
+            if(edgeList == "")
+            {
+                edgeList = "No edges";
+            }
+
             return edgeList;
         }
     }
