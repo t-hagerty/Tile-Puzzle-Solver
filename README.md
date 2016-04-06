@@ -3,8 +3,14 @@
 # Tile Puzzle Solver
 Tile Puzzle Solver was written as an academic exercise in developing a special-purpose algorithm to solve a relatively complex problem. It enables the user to create a color tile maze-like puzzle based on a puzzle from the game "Undertale" (http://undertale.wikia.com/wiki/Multicolor_Tile_Puzzle) and then search for a solution using an algorithm based on the A* path-finding algorithm.
 
+What separates the color tile puzzle from a normal maze path-finding problem, and what makes it more interesting to solve algorithmically is that the state of the puzzle's obstacles and movement rules change in the event of stepping over certain types of tiles.
+
 #Features
-- to be detailed
+- A GUI for easily creating custom puzzles of size and configuration.
+- The ability to save created puzzles and load them later.
+- Potentially relevant possible movements to the solution can be displayed with the "Graph" function.
+- Show the solution to the created puzzle (if solvable).
+- Determine an alternate path that avoids green tiles when possible.
 
 # Puzzle Rules
 DISCLAIMER: As I have not myself played the video game from which this puzzle originates, I cannot guarantee that Tile Puzzle Solver's puzzle rules and behaviors 100% match the source puzzle, however I am fairly certain these rules are accurate after studying information on the game's puzzle as well as fan-made versions of the puzzle (https://putnam3145.github.io/tilemaze for example).
@@ -32,4 +38,7 @@ The goal of the puzzle is to make it from the left boundary to the right, enteri
 - to be explained
 
 #License
-- to be detailed
+This software and its code is made freely available under the MIT License. See LICENSE.txt for more information.
+
+#Special Thanks
+- BlueRaja's Priority Queue for C# (https://github.com/BlueRaja/High-Speed-Priority-Queue-for-C-Sharp)
